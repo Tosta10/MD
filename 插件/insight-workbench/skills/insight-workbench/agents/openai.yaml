@@ -1,0 +1,6 @@
+interface:
+  display_name: "理解工作台"
+  short_description: "Clarify goals and retain scoped, evidence-backed experience."
+  default_prompt: "使用 $insight-workbench 整理本次目的、限制與完成條件，檢索相關經驗。"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+{
+  "role": "insight",
+  "name": "insight-workbench",
+  "displayName": "理解工作台",
+  "version": "0.1.0",
+  "preferredPort": 39473
+}

@@ -1,0 +1,35 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { Workbench } from '../src/core.mjs';
+import { startUi } from '../src/server.mjs';
+const testRoot=path.resolve('.test-data');fs.mkdirSync(testRoot,{recursive:true});
+const cleanup=dir=>{if(!path.resolve(dir).startsWith(testRoot+path.sep))throw new Error('Unsafe cleanup');fs.rmSync(dir,{recursive:true,force:true});};
+
+test('HTTP local session checks token and origin, and round-trips Chinese payloads',async t=>{
+  const dir=fs.mkdtempSync(path.join(testRoot,'http-')),w=new Workbench(path.join(dir,'data')),ui=await startUi(w);
+  t.after(async()=>{await ui.close();w.close();cleanup(dir);});
+  const html=await (await fetch(ui.url)).text(),token=html.match(/name="workbench-token" content="([^"]+)"/)[1];
+  assert.equal((await fetch(`${ui.url}/api/state`)).status,403);
+  assert.equal((await fetch(`${ui.url}/api/state`,{headers:{'x-workbench-token':token,origin:'https://example.com'}})).status,403);
+  assert.equal((await fetch(`${ui.url}/health`)).status,200);
+  const res=await fetch(`${ui.url}/api/call`,{method:'POST',headers:{'x-workbench-token':token,'content-type':'application/json',origin:ui.url},body:JSON.stringify({name:'create_task_brief',arguments:{title:'理解繁體中文',goal:'保存中文原文',criteria:['實際讀回一致']}})});
+  assert.equal(res.status,200);assert.equal((await res.json()).result.title,'理解繁體中文');
+});
+
+for(const role of ['md','insight'])test(`standalone ${role} plugin negotiates MCP, lists scoped tools and opens its UI`,{timeout:30000},async t=>{
+  const dir=fs.mkdtempSync(path.join(testRoot,`mcp-${role}-`));
+  const plugin=role==='md'?'md-manager':'insight-workbench';
+  const launch=process.platform==='win32'?{command:'powershell.exe',args:['-NoProfile','-ExecutionPolicy','Bypass','-File',path.resolve(plugin,'scripts/Start-Mcp.ps1')]}:{command:process.execPath,args:[path.resolve(plugin,'runtime/mcp.mjs'),'--role',role]};
+  const transport=new StdioClientTransport({...launch,env:{...process.env,CODEX_NODE_PATH:process.execPath,CODEX_WORKBENCH_HOME:dir},stderr:'pipe'});
+  const client=new Client({name:'workbench-integration-test',version:'1.0.0'});
+  t.after(async()=>{await client.close();cleanup(dir);});
+  await client.connect(transport);const {tools}=await client.listTools();const names=tools.map(x=>x.name);
+  assert.ok(names.includes('open_workbench'));assert.equal(names.includes('mark_document'),role==='md');assert.equal(names.includes('save_experience'),role==='insight');
+  const overview=await client.callTool({name:'get_overview',arguments:{}});assert.equal(overview.isError,undefined);assert.equal(JSON.parse(overview.content[0].text).documents,0);
+  const open=await client.callTool({name:'open_workbench',arguments:{}});const url=JSON.parse(open.content[0].text).url;assert.match(url,/^http:\/\/127\.0\.0\.1:\d+$/);assert.equal((await (await fetch(url+'/health')).json()).role,role);
+  const invalid=await client.callTool({name:role==='md'?'save_experience':'scan_markdown',arguments:{}});assert.equal(invalid.isError,true);
+});

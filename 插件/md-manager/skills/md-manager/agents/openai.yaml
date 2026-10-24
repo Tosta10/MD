@@ -1,0 +1,6 @@
+interface:
+  display_name: "MD 管理台"
+  short_description: "Organize Markdown and review completed files for deletion."
+  default_prompt: "使用 $md-manager 盤點指定資料夾，整理指令並標註已完成的待刪除文件。"
+policy:
+  allow_implicit_invocation: true
