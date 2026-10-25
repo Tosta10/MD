@@ -1,0 +1,32 @@
+{
+  "name": "local-workbenches",
+  "interface": {
+    "displayName": "本機工作台"
+  },
+  "plugins": [
+    {
+      "name": "md-manager",
+      "source": {
+        "source": "local",
+        "path": "./md-manager"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "insight-workbench",
+      "source": {
+        "source": "local",
+        "path": "./insight-workbench"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

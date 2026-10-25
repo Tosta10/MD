@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-25T03:45:46.687Z",
+  "node": "v24.22.1",
+  "platform": "win32",
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+  "memoryGiB": 31.7,
+  "corpus": {
+    "files": 10000,
+    "bytes": 182018890,
+    "averageBytes": 18202,
+    "languages": [
+      "Traditional Chinese",
+      "English identifiers"
+    ]
+  },
+  "cold": {
+    "ms": 98990.91,
+    "readFiles": 10000,
+    "parsedFiles": 10000
+  },
+  "warm": {
+    "ms": 2193.01,
+    "readFiles": 0,
+    "parsedFiles": 0
+  },
+  "singleChange": {
+    "ms": 2192.41,
+    "readFiles": 1,
+    "parsedFiles": 1
+  },
+  "listP95Ms": 20.65,
+  "searchP95Ms": 1.47,
+  "summaryP95Ms": 28.15,
+  "metadataPayloadBytes": 32185,
+  "peakRssMiB": 290,
+  "notes": [
+    "Cold/warm local SQLite; 100 repeated list/search/summary queries.",
+    "No network, model or UI rendering latency included.",
+    "No v0.1 baseline or semantic quality comparison was measured."
+  ]
+}

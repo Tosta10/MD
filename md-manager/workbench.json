@@ -1,0 +1,7 @@
+{
+  "role": "md",
+  "name": "md-manager",
+  "displayName": "MD 管理台",
+  "version": "2.0.1",
+  "preferredPort": 39472
+}
