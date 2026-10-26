@@ -4,13 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { isBuiltin } from 'node:module';
 const root = fileURLToPath(new URL('../', import.meta.url));
-const plugins = [ ['md-manager','MD 管理台','md','#245e4e'], ['insight-workbench','理解工作台','insight','#596183'] ];
+const plugins = [ ['md-manager','MD 管理台','md','#2463eb'], ['insight-workbench','理解工作台','insight','#2463eb'] ];
 const version = JSON.parse(fs.readFileSync(path.join(root,'package.json'))).version;
 const json = (file, data) => { fs.mkdirSync(path.dirname(file),{recursive:true}); fs.writeFileSync(file,JSON.stringify(data,null,2)+'\n'); };
 const dependencyRoots = new Set();
 async function bundle(outdir) {
   fs.mkdirSync(outdir,{recursive:true});
-  for (const entry of ['server','mcp']) {
+  for (const entry of ['server','mcp','image-worker']) {
     const result = await build({ entryPoints:[path.join(root,`src/${entry}.mjs`)], outfile:path.join(outdir,`${entry}.mjs`), bundle:true, platform:'node', target:'node24', format:'esm', packages:'bundle', define:{__WORKBENCH_SERVER_ENTRY__:entry==='server'?'true':'false'}, banner:{js:"import { createRequire as __createRequire } from 'node:module'; const require = __createRequire(import.meta.url);"}, legalComments:'eof', sourcemap:false, metafile:true });
     for (const output of Object.values(result.metafile.outputs)) for (const dependency of output.imports) if (dependency.external && !isBuiltin(dependency.path)) throw new Error(`Unbundled dependency: ${dependency.path}`);
     for (const input of Object.keys(result.metafile.inputs)) {
@@ -27,11 +27,14 @@ for(const dir of [...dependencyRoots].sort()){
   const licenses=fs.readdirSync(dir).filter(file=>/^(license|licence|copying|notice)(\.|$|-)/i.test(file)&&fs.statSync(path.join(dir,file)).isFile());
   notices.push(`${pkg.name}@${pkg.version}\nLicense: ${typeof pkg.license==='string'?pkg.license:JSON.stringify(pkg.license||'See package notices')}\n${licenses.map(file=>fs.readFileSync(path.join(dir,file),'utf8')).join('\n')}\n`);
 }
-fs.writeFileSync(path.join(root,'THIRD-PARTY-NOTICES.txt'),notices.join('\n--------------------\n').trimEnd()+'\n');
+fs.writeFileSync(path.join(root,'THIRD-PARTY-NOTICES.txt'),notices.join('\n--------------------\n').split(/\r?\n/).map(line=>line.trimEnd()).join('\n').trimEnd()+'\n');
 for(const [name,displayName,role,color] of plugins){
   const dir=path.join(root,name);
   if(!fs.existsSync(path.join(dir,'skills',name,'SKILL.md')))throw new Error(`Missing skill: ${name}`);
   fs.mkdirSync(path.join(dir,'scripts'),{recursive:true});
+  fs.copyFileSync(path.join(root,'docs/contracts/maintenance.md'),path.join(dir,'skills',name,'references/maintenance.md'));
+  json(path.join(dir,'mcp.portable.json'),{mcpServers:{[name]:{command:'node',args:['${PLUGIN_ROOT}/runtime/mcp.mjs','--role',role],cwd:'${PLUGIN_ROOT}'}}});
+
   fs.cpSync(path.join(root,'public'),path.join(dir,'public'),{recursive:true});
   fs.cpSync(path.join(root,'dist'),path.join(dir,'runtime'),{recursive:true});
   fs.copyFileSync(path.join(root,'scripts','Start-Mcp.ps1'),path.join(dir,'scripts','Start-Mcp.ps1'));

@@ -1,6 +1,6 @@
 {
   "name": "md-manager",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "盤點與分類 Markdown、檢查指令、標註已完成與待刪除文件，預覽並還原變更。",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
@@ -15,7 +15,7 @@
       "Read",
       "Write"
     ],
-    "brandColor": "#245e4e",
+    "brandColor": "#2463eb",
     "defaultPrompt": [
       "盤點我指定的資料夾，依五項原則提出整理建議。",
       "將已完成文件標為待刪除並保留依據。"

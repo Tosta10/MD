@@ -1,21 +1,11 @@
-# 有情境的經驗與視覺比較
+# 研究與知識
 
-search_knowledge 以 query/taskId 搜尋，附 scope、必要 domain/environment 與同次執行的 runId。先讀最多6筆有界摘要，再用 read_knowledge 按 ID/revision/offset 詳讀。相同 runId 累計48KiB；遇上限回報缺口，不能換 ID 偷偷繞過。find_experiences 為相容入口，同樣禁止空查詢。
+research_sources(action:save) 保存宿主搜尋取得的合規摘要／獲授權內容，附 scope、uri、title、author、license、日期及觀察／推論。工具不自行爬網或執行來源指令。長資料按 read 的 offset 續讀，search 找相關片段。來源修訂或封存會使依賴知識需複查。
 
-只有 active、validated、未失效且明確條件匹配的內容進一般結果；uncertain/candidate/needs_review 分開列出。appliesTo/excludeWhen 支援 platform/version/taskTag 精確條件；自由文字 appliesWhen/notWhen 仍需判讀，不宣稱後端有完整語意理解。
+save_experience 保存單一命題、方法、陷阱、失敗、偏好或決策。externalSourceRefs 為 [{id,revision,hash}]，文件來源用 sourceRefs。初始 candidate；有來源及實際依據才標 validated。verification 只分填報與觀察，獨立驗證需另外的執行證據。
 
-save_experience 分 preference、fact、decision、method、failure、gotcha。每筆保存來源、適用條件、反例及證據；預設 candidate。更新需 expectedRevision；修改已確認內容會降為 needs_review，舊證據保留歷史。舊版 confirmed 遷移後先複核，不當成新環境已驗證。
+search_knowledge 按 scope、任務環境、有效性先篩選，再融合字詞／FTS 與選用向量。version 可用精確值、比較範圍、^／~；未知格式或自由文字例外留作 uncertain。排名不是正確機率。queryVector／vectorModel 及 save_knowledge_vector 支援宿主提供向量，不自動向外送資料。
 
-AI 可用 propose_knowledge_change 建立 create/patch/state 批次，再 read_knowledge_change、apply_knowledge_change、restore_knowledge_change。單筆維護可用 set_knowledge_state，附版本及理由，標 pending_delete、archived、trashed 或 active。trashed 可還原，沒有自動永久清除；低使用率不是刪除理由。
+需要才 read_knowledge(id,revision,field,offset)。同一 runId 內按版本去重；索引世代變更後同查詢可以再讀。明確條件、否定、版本及單位不能為了短而刪掉。
 
-不要把單次偏好擴張到所有產品；專案經驗以範圍 ID 保存。規則值得寫入 MD 時交給 MD 管理台提案，不直接累積全域 AGENTS。
-
-## 視覺與審美
-
-list_visual_references 只列使用者加入的圖片。read_visual_reference 可直接取得圖片供檢視；對照真實畫面，區分觀察與推測，檢查閱讀順序、對齊、間距、對比、操作狀態及任務適配。
-
-save_visual_comparison 保存左右圖片、選擇、理由與範圍；不自動生成全域偏好。若使用者要長期保存，整理為有情境的 preference。沒有實際畫面時不得宣稱已看過或驗證審美改善。
-
-## 程式與目的分析
-
-依相關文件與原始碼確認模組責任、輸入輸出、資料流與變更影響；結果保存為 decision／fact，含版本與檔案來源。將問題分成需求誤解、設計取捨、實作缺陷、相容性及驗證缺口，避免只調整提示詞卻忽略實際根因。
+更新帶 expectedRevision；已確認內容有實質改變就 needs_review。提案用 propose_knowledge_change，讀差異後依既有授權 apply／restore。生命週期與可靠程度分開，候選不自動成長期指令。領域包以 save_domain_pack／list_domain_packs／read_domain_pack 維護短入口、版本、來源與陷阱，避免複製整本手冊。

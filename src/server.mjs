@@ -20,7 +20,7 @@ export async function startUi(workbench, { port = 0, role = 'both' } = {}) {
   const server = http.createServer(async (req, res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'");
     try {
       if (req.headers.host !== new URL(baseUrl).host || (req.headers.origin && req.headers.origin !== baseUrl)) return send(res, 403, { error: '來源不符' });
       const url = new URL(req.url, baseUrl);
@@ -40,9 +40,13 @@ export async function startUi(workbench, { port = 0, role = 'both' } = {}) {
         if (url.pathname === '/api/document' && role !== 'insight') return send(res, 200, { result: workbench.document(input.documentId) });
         if (url.pathname === '/api/sections' && role !== 'insight') return send(res,200,{result:workbench.db.prepare('SELECT id,title,start_line,end_line,source_hash FROM sections WHERE document_id=? ORDER BY start_line LIMIT 100').all(input.documentId)});
         if (url.pathname === '/api/links' && role !== 'insight') {const doc=workbench.document(input.documentId);return send(res,200,{result:workbench.db.prepare('SELECT e.document_id,e.line,e.url,d.meta FROM edges e JOIN document_index d ON d.id=e.document_id WHERE e.target=? LIMIT 100').all(process.platform==='win32'?doc.path.toLowerCase():doc.path).map(r=>({...r,source:JSON.parse(r.meta),meta:undefined}))});}
+        if(url.pathname==='/api/activity'&&workbench.workspace)return send(res,200,{result:workbench.workspace.activity(input)});
+        if(url.pathname==='/api/draft'&&workbench.workspace)return send(res,200,{result:workbench.workspace.draft(input)});
+        if (url.pathname === '/api/history'&&workbench.documentsService)return send(res,200,{result:input.paged?workbench.documentsService.history(input):workbench.documentsService.history(input).items});
         if (url.pathname === '/api/history') return send(res,200,{result:workbench.db.prepare("SELECT kind,data FROM records WHERE kind IN ('plan','knowledgePlan') ORDER BY rowid DESC LIMIT 30").all().map(r=>{const p=JSON.parse(r.data);return {id:p.id,kind:r.kind,title:p.title,status:p.status,at:p.at,operations:p.operations.length};})});
-        if (url.pathname === '/api/merge-coverage' && role!=='insight') {const plan=workbench.plan(input.id);if(plan.status!=='proposed'||!Array.isArray(input.coverage)||input.coverage.length>50)throw new Error('整合方案或保留矩陣不正確');for(const item of input.coverage){if(typeof item.disposition!=='string'||!item.disposition.trim()||item.disposition.length>2000||!plan.sourceDocuments?.some(d=>d.documentId===item.documentId&&d.expectedHash===item.hash))throw new Error('每份來源需有相同版本及保留去向');}plan.coverage=input.coverage;return send(res,200,{result:workbench.planSummary(workbench.save('plan',plan))});}
-        if (url.pathname === '/api/batch-mark' && role!=='insight') {if(!Array.isArray(input.documents)||!input.documents.length||input.documents.length>2000)throw new Error('每批標記1–2000份');return send(res,200,{result:workbench.transaction(()=>input.documents.map(d=>{const doc=workbench.document(d.id);return workbench.markDocument({documentId:doc.id,expectedHash:d.hash,status:input.status,reason:input.reason,evidence:input.evidence,completed:doc.completed,confirmed:false});}))});}
+        if(url.pathname==='/api/merge-coverage'&&role!=='insight')return send(res,200,{result:workbench.documentsService.coverage(input)});
+        if(url.pathname==='/api/batch-mark'&&role!=='insight')return send(res,200,{result:workbench.documentsService.batch(input)});
+
         if (url.pathname === '/api/domains' && role!=='md') return send(res,200,{result:workbench.listDomains(input)});
         if (url.pathname === '/api/domain-record' && role!=='md') {const item=workbench.get('domain',input.id);if(!item)throw new Error('領域包不存在');return send(res,200,{result:item});}
         if (url.pathname === '/api/save-domain' && role!=='md') return send(res,200,{result:workbench.saveDomain(input)});
@@ -51,15 +55,15 @@ export async function startUi(workbench, { port = 0, role = 'both' } = {}) {
         if (url.pathname === '/api/knowledge-history' && role!=='md') return send(res,200,{result:workbench.db.prepare("SELECT json_extract(data,'$.revision') revision,json_extract(data,'$.reviewState') reviewState,json_extract(data,'$.lifecycle') lifecycle,json_extract(data,'$.updatedAt') updatedAt FROM records WHERE kind='knowledgeRevision' AND json_extract(data,'$.knowledgeId')=? ORDER BY rowid DESC LIMIT 30").all(input.id)});
         if (url.pathname === '/api/call') {
           if (!allowedTools.has(input.name)) return send(res, 404, { error: '工具不在此插件範圍內' });
-          return send(res, 200, { result: await dispatch(workbench, input.name, input.arguments || {}, async () => baseUrl) });
+          return send(res, 200, { result: await dispatch(workbench, input.name, input.arguments || {}, async () => baseUrl,{audience:'human',role}) });
         }
         if (url.pathname === '/api/remove-scope') return send(res, 200, { result: workbench.removeRoot(input.id) });
-        if (url.pathname === '/api/asset' && role !== 'md') { if (typeof input.base64 !== 'string') throw new Error('需要圖片資料'); const {file,...asset} = workbench.addAsset(Buffer.from(input.base64, 'base64'), input.name); return send(res, 200, { result: asset }); }
+        if (url.pathname === '/api/asset' && role !== 'md') { if (typeof input.base64 !== 'string') throw new Error('需要圖片資料'); const {file,...asset} = workbench.visual?workbench.visual.import(input):workbench.addAsset(Buffer.from(input.base64, 'base64'), input.name); return send(res, 200, { result: asset }); }
         if (url.pathname === '/api/delete-memory' && role !== 'md') return send(res, 200, { result: workbench.deleteMemory(input.id,input.expectedRevision) });
         return send(res, 404, { error: '找不到操作' });
       }
       if (req.method !== 'GET') return send(res, 405, { error: '不支援的操作' });
-      const assets = { '/': ['index.html','text/html; charset=utf-8'], '/app-v2.js':['app-v2.js','text/javascript; charset=utf-8'], '/workbench.css':['workbench.css','text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg','image/svg+xml'] };
+      const assets = { '/': ['index.html','text/html; charset=utf-8'], '/app-v2.js':['app-v2.js','text/javascript; charset=utf-8'], '/next-ui.js':['next-ui.js','text/javascript; charset=utf-8'], '/markdown.js':['markdown.js','text/javascript; charset=utf-8'], '/workbench.css':['workbench.css','text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg','image/svg+xml'] };
       const asset = assets[url.pathname]; if (!asset) return send(res, 404, { error: '找不到頁面' });
       let content = fs.readFileSync(path.join(publicDir, asset[0]));
       if (url.pathname === '/') content = Buffer.from(content.toString().replace('__WORKBENCH_TOKEN__', token));

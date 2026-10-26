@@ -1,6 +1,6 @@
 {
   "name": "insight-workbench",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "保存需求、限制、驗證證據及有情境的經驗，協助 Codex 理解與改善工作。",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
@@ -15,7 +15,7 @@
       "Read",
       "Write"
     ],
-    "brandColor": "#596183",
+    "brandColor": "#2463eb",
     "defaultPrompt": [
       "整理本次需求的目的、限制與完成條件。",
       "找出這個專案可以使用的已確認經驗。"

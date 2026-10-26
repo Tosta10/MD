@@ -1,3 +1,5 @@
+import { nextDefinitions, dispatchNext, validate } from './tools-next.mjs';
+import { hash,uid,fail } from './services/shared.mjs';
 const str = (description, extra = {}) => ({ type: 'string', description, ...extra });
 const bool = description => ({ type: 'boolean', description });
 const arr = description => ({ type: 'array', items: { type: 'string' }, maxItems: 100, description });
@@ -56,19 +58,37 @@ export function definitions(role = 'both') {
   add('list_domain_packs','列出領域來源的版本與摘要；不載入完整手冊。',obj({scope:str('範圍'),cursor:str('下一頁')}),'insight');
   add('read_domain_pack','按欄位詳讀選定領域包的來源、適用條件或陷阱。',obj({id:str('領域包ID'),field:str('欄位',{enum:['source','gotchas','appliesWhen']}),offset:{type:'integer',minimum:0}},['id']),'insight');
   const taskList=tools.find(t=>t.name==='list_task_briefs');if(taskList)taskList.inputSchema=obj({scope:str('管理範圍，省略列所有範圍'),cursor:str('下一頁 cursor')});
+  tools.push(...nextDefinitions(role));
+  const destructive=new Set(['apply_change_plan','restore_change_plan','set_knowledge_state','apply_knowledge_change','restore_knowledge_change','apply_maintenance_plan']);
+  for(const tool of tools){
+    tool.annotations.destructiveHint=destructive.has(tool.name);
+    if(!tool.inputSchema.properties.runId)tool.inputSchema.properties.runId=str('共用讀取工作 ID；省略時使用本次預設工作');
+    if(tool.name==='read_visual_reference')Object.assign(tool.inputSchema.properties,{maxDimension:{type:'integer',minimum:128,maximum:2048},rect:{type:'object',properties:{x:{type:'number',minimum:0,maximum:1},y:{type:'number',minimum:0,maximum:1},width:{type:'number',minimum:0,maximum:1},height:{type:'number',minimum:0,maximum:1}},required:['x','y','width','height'],additionalProperties:false}});
+    if(['search_knowledge','find_experiences'].includes(tool.name))Object.assign(tool.inputSchema.properties,{queryVector:{type:'array',maxItems:4096,items:{type:'number'}},vectorModel:str('與已索引向量相同的 embedding 模型'),maxBytes:{type:'integer',minimum:1024,maximum:12288}});
+    if(tool.name==='list_visual_references')Object.assign(tool.inputSchema.properties,{scope:str('範圍'),query:str('名稱'),offset:{type:'integer',minimum:0},limit:{type:'integer',minimum:1,maximum:100}});
+    if(tool.name==='save_experience')Object.assign(tool.inputSchema.properties,{externalSourceRefs:{type:'array',maxItems:20,items:obj({id:str('來源 ID'),revision:{type:'integer',minimum:1},hash:str('來源 hash')},['id','revision','hash'])},verification:str('填報或實際觀察',{enum:['reported','observed']})});
+  }
   return tools;
 }
 
-export async function dispatch(workbench, name, input = {}, uiProvider) {
+async function dispatchLegacy(workbench, name, input = {}, uiProvider) {
   switch (name) {
     case 'open_workbench': return { url: await uiProvider(), message: '在本機瀏覽器開啟；MCP 工具與此畫面使用相同資料庫。' };
     case 'get_overview': return workbench.summary();
     case 'list_scopes': return { scopes: workbench.roots() };
     case 'add_scope': return workbench.addRoot(input);
     case 'scan_markdown': return workbench.scan(input);
-    case 'list_documents': return workbench.documents(input);
-    case 'read_document': { const doc = workbench.document(input.documentId); const lines = doc.content.split(/\r?\n/); const start = Math.max(0, (input.startLine || 1) - 1);let content=lines.slice(start,start+Math.min(300,input.lineCount||150)).join('\n');while(Buffer.byteLength(content)>8192)content=content.slice(0,-1);return {id:doc.id,path:doc.path,title:doc.title,hash:doc.hash,content,totalLines:lines.length,startLine:start+1,truncated:content.length<doc.content.length,sourceTrust:'untrusted_document_content'}; }
-    case 'audit_markdown': return workbench.audit(input);
+    case 'list_documents': {
+      const result=workbench.documents({...input,limit:input.limit??(input._internal?50:20)});
+      if(!input._internal)result.documents=result.documents.map(d=>({id:d.id,rootId:d.rootId,title:d.title,relativePath:d.relativePath,hash:d.hash,category:d.category,status:d.effectiveStatus,completed:d.completed,protected:!!(d.protectedFile||d.managed||d.hardlinked),markStale:d.mark?.stale||false}));
+      return result;
+    }
+    case 'read_document': { const doc = workbench.document(input.documentId); const lines = doc.content.split(/\r?\n/); const start = Math.max(0, (input.startLine || 1) - 1);let content=lines.slice(start,start+Math.min(300,input.lineCount||150)).join('\n');while(Buffer.byteLength(content)>8192)content=content.slice(0,-1);return {id:doc.id,scope:doc.rootId,path:doc.path,title:doc.title,hash:doc.hash,content,totalLines:lines.length,startLine:start+1,truncated:content.length<doc.content.length,sourceTrust:'untrusted_document_content'}; }
+    case 'audit_markdown': {
+      const result=workbench.audit({...input,limit:input.limit??(input._internal?50:10)});
+      if(!input._internal)result.findings=result.findings.map(f=>({...f,original:f.original?.slice(0,600),suggestion:f.suggestion?.slice(0,600),originalTruncated:(f.original?.length||0)>600}));
+      return result;
+    }
     case 'mark_document': return workbench.markDocument(input);
     case 'set_document_category': return workbench.setCategory(input);
     case 'create_change_plan': return workbench.planSummary(workbench.createPlan(input));
@@ -81,12 +101,12 @@ export async function dispatch(workbench, name, input = {}, uiProvider) {
     case 'update_task_brief': return workbench.updateTask(input);
     case 'save_experience': return workbench.saveMemory(input);
     case 'find_experiences': {const result=workbench.knowledge.search(input);return {...result,experiences:result.items||[]};}
-    case 'list_visual_references': return { assets: workbench.list('asset').map(({file,...a}) => a), comparisons: workbench.list('comparison') };
+    case 'list_visual_references': return workbench.visual?workbench.visual.list({...input,limit:input.limit??(input._internal?30:12)}):{assets:workbench.list('asset').map(({file,...a})=>a),comparisons:workbench.list('comparison')};
     case 'read_visual_reference': { const { file, ...asset } = workbench.asset(input.id); return asset; }
     case 'save_visual_comparison': return workbench.saveComparison(input);
     case 'start_index_job': return workbench.startJob(input);
-    case 'get_index_job': return workbench.getJob(input.id);
-    case 'cancel_index_job': return workbench.cancelJob(input.id);
+    case 'get_index_job': return workbench.background?workbench.background.get(input.id):workbench.getJob(input.id);
+    case 'cancel_index_job': return workbench.background?workbench.background.cancel(input.id):workbench.cancelJob(input.id);
     case 'watch_scope': return workbench.watchScope(input.rootId,input.enabled);
     case 'read_document_section': return workbench.readSection(input);
     case 'propose_section_edit': return workbench.planSummary(workbench.patchSection(input));
@@ -94,7 +114,11 @@ export async function dispatch(workbench, name, input = {}, uiProvider) {
     case 'review_finding': return workbench.reviewFinding({origin:'ai',...input});
     case 'search_knowledge': return workbench.knowledge.search(input);
     case 'read_knowledge': return workbench.knowledge.read(input);
-    case 'list_knowledge': return workbench.knowledge.list(input);
+    case 'list_knowledge': {
+      const result=workbench.knowledge.list({...input,limit:input.limit??(input._internal?30:8)});
+      if(!input._internal)result.items=result.items.map(k=>({id:k.id,revision:k.revision,title:k.title,type:k.type,scope:k.scope,reviewState:k.reviewState,lifecycle:k.lifecycle,summary:k.summary?.slice(0,160),detailRequired:true}));
+      return result;
+    }
     case 'set_knowledge_state': return workbench.knowledge.state(input);
     case 'propose_knowledge_change': return workbench.knowledge.propose(input);
     case 'read_knowledge_change': {const plan=workbench.get('knowledgePlan',input.id);if(!plan)throw new Error('方案不存在');const op=plan.operations[input.operationIndex||0],offset=input.offset||0;const excerpt=item=>item?{title:item.title,type:item.type,revision:item.revision,lifecycle:item.lifecycle,reviewState:item.reviewState,content:item.content?.slice(offset,offset+1500),source:item.source?.slice(0,300),appliesWhen:item.appliesWhen?.slice(0,300),notWhen:item.notWhen?.slice(0,300)}:null;return {id:plan.id,title:plan.title,status:plan.status,reason:plan.reason,operations:plan.operations.map(op=>({type:op.type,id:op.id,expectedRevision:op.expectedRevision,afterId:op.afterId,afterRevision:op.afterRevision})),selectedOperation:op?{before:excerpt(op.before),after:excerpt({...op.before,...op.values,...(op.lifecycle?{lifecycle:op.lifecycle}:{})}),nextOffset:Math.max(op.before?.content?.length||0,op.values?.content?.length||0)>offset+1500?offset+1500:null}:null};}
@@ -108,4 +132,33 @@ export async function dispatch(workbench, name, input = {}, uiProvider) {
     case 'read_domain_pack': return workbench.readDomain(input);
     default: throw new Error('找不到工具');
   }
+}
+
+
+export async function dispatch(workbench,name,input={},uiProvider,options={}){
+  const definition=definitions('both').find(t=>t.name===name);
+  if(!definition)throw new Error('找不到工具');
+  validate(definition.inputSchema,input);
+  if(options.role==='insight'&&name==='apply_maintenance_plan'&&input.kind==='plan')throw new Error('文件方案請由 MD 管理台套用');
+  const human=options.audience==='human',args=human?{...input,_internal:true}:input;
+  const mixedReads={research_sources:['list','read','search'],workspace_drafts:['list','read'],maintenance_policy:['list','read'],evaluate_workbench:['list','report'],review_document:['prepare','sections','clauses'],background_job:['get'],knowledge_portability:['export']};
+  if(input.runId&&workbench.budget){
+    const ledger=workbench.get('retrieval',input.runId),targetScope=input.scope||input.rootId||input.values?.scope||(input.documentId?workbench.get('document',input.documentId)?.rootId:undefined)||(input.id&&/knowledge|experience/.test(name)?workbench.get('memory',input.id)?.scope:undefined);
+    if(ledger?.scope&&targetScope&&targetScope!=='personal'&&ledger.scope!==targetScope)fail('操作與脈絡工作範圍不同','OUT_OF_SCOPE');
+  }
+  const read=definition.annotations.readOnlyHint||mixedReads[name]?.includes(input.action);
+  const budgeted=!human&&workbench.budget&&name!=='open_workbench'&&name!=='context_run';
+  const runId=budgeted?(input.runId||workbench.budget.resolve(input)):null;
+  if(budgeted&&!read&&(workbench.budget.status(runId).remainingEstimatedTokens<256||workbench.budget.status(runId).remainingBytes<256))fail('預算不足以開始下一項操作，請檢視用量或建立明確的新工作','BUDGET_EXHAUSTED');
+  const extended=nextDefinitions('both').some(t=>t.name===name);
+  let result=await(extended?dispatchNext(workbench,name,args):dispatchLegacy(workbench,name,args,uiProvider));
+  if(budgeted&&!result?.budget&&!result?.alreadySent){
+    let payload=result&&typeof result==='object'&&!Array.isArray(result)?result:{items:result};
+    if(!read&&Buffer.byteLength(JSON.stringify(payload))>2000){
+      payload={id:payload.id||payload.task?.id,revision:payload.revision||payload.task?.revision,status:payload.status||'saved',title:String(payload.title||payload.task?.title||'').slice(0,100),scope:payload.scope,contentHash:payload.contentHash,responseTruncated:true,detailRef:{tool:name,id:payload.id||payload.task?.id},message:'已保存；需要詳細內容時請按 ID 分段讀取。'};
+    }
+    const chargeRunId=input.runId||workbench.budget.resolve({...input,scope:payload.scope||input.scope||input.rootId});
+    result=workbench.budget.charge(payload,chargeRunId,(read?'tool:'+name+':'+hash(payload):'ack:'+name+':'+uid()),{ack:!read});
+  }
+  return result;
 }

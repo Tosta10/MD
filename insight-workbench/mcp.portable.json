@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "insight-workbench": {
+      "command": "node",
+      "args": [
+        "${PLUGIN_ROOT}/runtime/mcp.mjs",
+        "--role",
+        "insight"
+      ],
+      "cwd": "${PLUGIN_ROOT}"
+    }
+  }
+}

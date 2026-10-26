@@ -20,7 +20,7 @@ foreach ($pluginName in @('md-manager','insight-workbench')) {
     $archive = [IO.Compression.ZipFile]::OpenRead($archivePath)
     try {
         $entries = @($archive.Entries | ForEach-Object { $_.FullName.Replace('\','/') })
-        foreach ($entry in @('plugin.json','mcp.json','.codex-plugin/plugin.json','.mcp.json','runtime/mcp.mjs','runtime/server.mjs','public/app-v2.js','public/workbench.css',"skills/$pluginName/SKILL.md",'THIRD-PARTY-NOTICES.txt')) {
+        foreach ($entry in @('plugin.json','mcp.json','.codex-plugin/plugin.json','.mcp.json','runtime/mcp.mjs','runtime/server.mjs','runtime/image-worker.mjs','mcp.portable.json','public/next-ui.js','public/markdown.js','public/app-v2.js','public/workbench.css',"skills/$pluginName/SKILL.md",'THIRD-PARTY-NOTICES.txt')) {
             if ($entries -notcontains $entry) { throw "Missing archive entry: $entry" }
         }
     } finally { $archive.Dispose() }

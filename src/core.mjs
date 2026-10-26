@@ -5,7 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import * as yaml from 'js-yaml';
 
-export const VERSION = '2.0.1';
+export const VERSION = '3.0.0';
 export const CATEGORIES = ['代理指令','Skill','規格與企劃','使用與操作','任務待辦','驗證與量測','版本與紀錄','授權與署名','其他文件'];
 export const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 const now = () => new Date().toISOString();

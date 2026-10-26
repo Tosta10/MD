@@ -1,6 +1,6 @@
 import {sha} from './core.mjs';
 
-function shingles(text){const normalized=text.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').slice(0,6000),set=new Set(normalized.match(/[a-z][a-z0-9_]{2,}/g)||[]);for(let i=0;i<Math.min(normalized.length-2,1500);i++){const token=normalized.slice(i,i+3);if(/[\u3400-\u9fff]/.test(token)&&!token.includes(' '))set.add(token);}return set;}
+function shingles(text){const source=text.length>6000?Array.from({length:8},(_,i)=>text.slice(Math.floor(i*(text.length-750)/7),Math.floor(i*(text.length-750)/7)+750)).join(' '):text;const normalized=source.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').slice(0,6000),set=new Set(normalized.match(/[a-z][a-z0-9_]{2,}/g)||[]);for(let i=0;i<Math.min(normalized.length-2,1500);i++){const token=normalized.slice(i,i+3);if(/[\u3400-\u9fff]/.test(token)&&!token.includes(' '))set.add(token);}return set;}
 function hash(text){let h=2166136261;for(let i=0;i<text.length;i++)h=Math.imul(h^text.charCodeAt(i),16777619);return h>>>0;}
 export function similarFindings(documents,{pairBudget=4000}={}){
   const buckets=new Map(),pairs=new Set(),findings=[];let comparisons=0;

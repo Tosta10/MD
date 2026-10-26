@@ -1,19 +1,26 @@
-# 完成標註與可還原變更
+# 編輯、覆蓋與復原
 
-## 標註
+讀取目前 hash 後建立方案，寫入不直接覆蓋其他工作。annotate_document 可原子保存標註與分類；待刪除標註仍是旁註，需完成／取代依據。
 
-用 `read_document` 取得目前雜湊。`mark_document` 的 completed 表示有工作完成依據，pending_delete 表示候選待刪除；reason 與 evidence 記錄理由及成果，可填 replacementId。
+## 文件操作
 
-標註保存在本機，不修改來源 MD。只有使用者確實確認該候選時才設定 confirmed。檔案改變後舊標註會過時，需重新核對。授權或套件文件可以標註，但不經一般刪除流程處理。
+- create_change_plan：write／create／delete；既有來源帶 expectedHash。read_change_plan 按 operationIndex／offset 比較。
+- propose_section_edit：先讀 section ID 及 hash，保留其他正文。
+- create_document_plan(action: replace)：values 內提供 documents:[{id,hash}]、search、replacement。此版採字面比對，不執行任意 regex。
+- action: metadata：提供 documentId、expectedHash、fields 純量欄位，保留其他 frontmatter 與換行；複雜 YAML 不能安全修改時回原文編輯。
+- action: split：提供 routerContent、attachments:[{relativePath,content}]，核對所有來源區塊去向。
+- create_move_plan：修復已索引的入站／出站 Markdown 引用，保留文件 ID。
 
-## 提案與套用
+## 整合與拆分
 
-1. 整合由 Codex 比對來源、保留獨有內容並提供完整目標文字。新附件以 create 操作指定 rootId 與相對 MD 路徑。
-2. `create_change_plan` 建立 write／create／delete 操作；既有文件帶目前 expectedHash。同一批更新所有受影響引用。
-3. 刪除需 pending_delete、完成依據及 confirmed 均成立。沒有取代文件時也要說明完成且不再需要的理由；舊日期本身不是刪除依據。
-4. `read_change_plan` 以 operationIndex 查看各項差異；長內容以 offset 續讀，不把片段視為全文。具體方案已獲授權後用 `apply_change_plan(confirm: true)`；受影響文件會即時更新索引，再核對成果。
-5. `restore_change_plan(confirm: true)` 還原指定批次。後續檔案被改過時停止，不以舊備份覆蓋新內容。
+sourceDocuments 鎖定所有來源版本。review_document(action: clauses) 取得內容區塊 ID；set_merge_coverage 必須完整列出來源。
 
-章節修改使用 `propose_section_edit`，必須先用 `read_document_section` 核對來源；移動/改名用 `create_move_plan`，顯示入站與出站引用修復。合併用 sourceDocuments 鎖定所有來源版本，保留獨有內容及取捨，不在提案套用前把來源標為已被取代。
+原文在新成果中完整保留的區塊會自動核對。未保留區塊提供 clauses:[{id,resolution,target,reason}]：resolution 為 replaced 或 discarded；取代內容須存在於成果，且兩者都要有理由。這個紀錄讓取捨可審查，不代表程式能證明語意等價。
 
-刪除或移動前執行一次成功索引，若發現未索引檔案、不可讀來源或新引用則停止。讀寫範圍以已加入根目錄為準；只保證已加入範圍及支援 Markdown 語法的引用。操作失敗會嘗試還原已寫入項目；applying、recovery_required 或 failed 批次可走還原流程核對每項實際 hash。若有後續衝突，回報具體檔案，不宣稱整批已還原。
+多來源合併及路由拆分沒有完整覆蓋就不能套用。不要把字詞摘要當成完整內容；沒有處理完時保留來源。
+
+## 套用與復原
+
+具體方案已授權後 apply_change_plan(confirm:true)；有有效自治政策時可用 apply_maintenance_plan。版本、引用及覆蓋檢查依然執行。restore_change_plan 還原指定批次，後續已修改時回報衝突。
+
+刪除需 pending_delete、完成依據及 confirmed。刪除／移動前需要成功索引；範圍外或未支援語法的引用不在保證內。來源及 journal 保留於批次；補償失敗用 recovery_required 流程核對，不宣稱整批已恢復。此版不自動永久清除。

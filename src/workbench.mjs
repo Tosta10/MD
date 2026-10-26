@@ -6,6 +6,13 @@ import { DatabaseSync } from 'node:sqlite';
 import { Workbench as LegacyWorkbench, VERSION, parseMarkdown, classify, sha } from './core.mjs';
 import { KnowledgeStore, METHODS } from './knowledge.mjs';
 import { similarFindings } from './review.mjs';
+import { WorkspaceService } from './services/workspace.mjs';
+import { BudgetService } from './services/budget.mjs';
+import { RetrievalService } from './services/retrieval.mjs';
+import { SourceService, ContextService } from './services/context.mjs';
+import { VisualService } from './services/visual.mjs';
+import { DocumentService } from './services/documents.mjs';
+import { PolicyService, JobService } from './services/maintenance.mjs';
 
 const now=()=>new Date().toISOString(),uid=()=>crypto.randomUUID();
 const fail=(message,code='INVALID_REQUEST')=>{throw Object.assign(new Error(message),{code});};
@@ -23,7 +30,13 @@ function snapshotLegacy(dataDir){
 
 export class Workbench extends LegacyWorkbench {
   constructor(dataDir){
-    dataDir=path.resolve(dataDir);snapshotLegacy(dataDir);super(dataDir,{databaseName:'workbench-v2.sqlite'});
+    dataDir=path.resolve(dataDir);snapshotLegacy(dataDir);
+    const v3=path.join(dataDir,'workbench-v3.sqlite'),v2=path.join(dataDir,'workbench-v2.sqlite');
+    if(!fs.existsSync(v3)&&fs.existsSync(v2)){
+      const temp=path.join(dataDir,'v3-migration-'+uid()+'.sqlite'),source=new DatabaseSync(v2);
+      try{source.exec('PRAGMA busy_timeout=5000');source.exec("VACUUM INTO '"+temp.replaceAll("'","''")+"'");try{fs.linkSync(temp,v3);}catch(e){if(e.code!=='EEXIST')throw e;}}finally{source.close();if(fs.existsSync(temp))fs.unlinkSync(temp);}
+    }
+    super(dataDir,{databaseName:'workbench-v3.sqlite'});
     this.jobs=new Map();this.watchers=new Map();this.closed=false;this.knowledge=new KnowledgeStore(this);
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS document_index(id TEXT PRIMARY KEY,path TEXT NOT NULL,category TEXT NOT NULL,status TEXT NOT NULL,hash TEXT NOT NULL,mtime TEXT,size INTEGER,observed TEXT NOT NULL DEFAULT 'ok',meta TEXT NOT NULL);
@@ -47,14 +60,32 @@ export class Workbench extends LegacyWorkbench {
       this.save('meta',{id:'v2',version:2,migratedAt:now(),source:fs.existsSync(path.join(dataDir,'workbench.sqlite'))?'v0.1 snapshot':'new database',counts:{documents:this.list('document').length,memories:this.list('memory').length,tasks:this.list('task').length}});
     });
     if(!this.get('meta','classifier-2'))this.transaction(()=>{for(const row of this.db.prepare('SELECT id,path,meta FROM document_index').all()){const meta=JSON.parse(row.meta),flags=classify(row.path,{completed:meta.completed});this.db.prepare("UPDATE records SET data=json_set(data,'$.category',?,'$.managed',json(?),'$.protectedFile',json(?)) WHERE kind='document' AND id=?").run(flags.category,JSON.stringify(flags.managed),JSON.stringify(flags.protectedFile),row.id);this.indexMeta({...meta,...flags});}this.save('meta',{id:'classifier-2',version:2});super.remove('meta','audit');});
+    this.initializeServices();
+  }
+  initializeServices(){
+    if(!this.get('meta','v3')){
+      const backup=path.join(this.dataDir,'before-v3.sqlite');
+      if(!fs.existsSync(backup))this.db.exec("VACUUM INTO '"+backup.replaceAll("'","''")+"'");
+    }
+    this.workspace=new WorkspaceService(this);
+    this.budget=new BudgetService(this);
+    this.retrieval=new RetrievalService(this);
+    this.sources=new SourceService(this);
+    this.contextService=new ContextService(this);
+    this.visual=new VisualService(this);
+    this.documentsService=new DocumentService(this);
+    this.policies=new PolicyService(this);
+    this.background=new JobService(this);
+    if(!this.get('meta','v3'))this.save('meta',{id:'v3',version:3,at:now(),backup:'before-v3.sqlite'});
   }
   transaction(work){if(this.inTransaction)return work();this.db.exec('BEGIN IMMEDIATE');this.inTransaction=true;try{const result=work();this.db.exec('COMMIT');return result;}catch(e){this.db.exec('ROLLBACK');throw e;}finally{this.inTransaction=false;}}
-  save(kind,item){const result=super.save(kind,item);if(this.ready){if(kind==='document')this.indexDocument(item);if(['mark','classification'].includes(kind)){const doc=this.get('document',item.id);if(doc)this.indexMeta(doc);if(kind==='classification')super.remove('meta','audit');} }return result;}
-  remove(kind,id){super.remove(kind,id);if(this.ready&&kind==='classification'){const doc=this.get('document',id);if(doc)this.indexMeta(doc);super.remove('meta','audit');}if(this.ready&&kind==='document'){this.knowledge.invalidateSource(id,null);this.dropSections(id);for(const table of ['memberships','edges','findings'])this.db.prepare(`DELETE FROM ${table} WHERE document_id=?`).run(id);this.db.prepare('DELETE FROM document_index WHERE id=?').run(id);super.remove('meta','audit');}}
+  save(kind,item){const result=super.save(kind,item);if(kind==='task'&&this.ready&&item.revision&&!super.get('taskRevision',item.id+':'+item.revision))super.save('taskRevision',{...item,id:item.id+':'+item.revision,taskId:item.id});if(this.ready){if(kind==='document')this.indexDocument(item);if(['mark','classification'].includes(kind)){const doc=this.get('document',item.id);if(doc)this.indexMeta(doc);if(kind==='classification')super.remove('meta','audit');} }return result;}
+  remove(kind,id){super.remove(kind,id);if(this.ready&&kind==='classification'){const doc=this.get('document',id);if(doc)this.indexMeta(doc);super.remove('meta','audit');}if(this.ready&&kind==='document'){if(this.documentsService){const prior=this.db.prepare('SELECT path FROM document_index WHERE id=?').get(id);if(prior)this.db.prepare('DELETE FROM audit_cache WHERE document_id IN (SELECT document_id FROM edges WHERE target=?)').run(key(prior.path));this.db.prepare("UPDATE findings SET state='stale' WHERE EXISTS(SELECT 1 FROM json_each(findings.data,'$.relatedSources') WHERE json_extract(value,'$.documentId')=?)").run(id);}this.knowledge.invalidateSource(id,null);this.dropSections(id);for(const table of ['memberships','edges','findings'])this.db.prepare(`DELETE FROM ${table} WHERE document_id=?`).run(id);this.db.prepare('DELETE FROM document_index WHERE id=?').run(id);super.remove('meta','audit');}}
   effective(doc){const mark=this.markFor(doc.id,doc.hash),classification=this.get('classification',doc.id),validMark=mark&&!mark.stale?mark:null;const completed=validMark?validMark.completed:!!doc.completed;return {...trimDoc(doc),originalCategory:doc.category,category:classification?.hash===doc.hash?classification.category:doc.category,classification:classification?{...classification,stale:classification.hash!==doc.hash}:null,completed,effectiveStatus:validMark?.status|| (completed?'completed':'active'),mark,observedState:doc.observedState||'ok'};}
   indexMeta(doc){const meta=this.effective(doc);this.db.prepare(`INSERT INTO document_index(id,path,category,status,hash,mtime,size,observed,meta) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET path=excluded.path,category=excluded.category,status=excluded.status,hash=excluded.hash,mtime=excluded.mtime,size=excluded.size,observed=excluded.observed,meta=excluded.meta`).run(doc.id,doc.path,meta.category,meta.effectiveStatus,doc.hash,doc.modifiedAt,doc.size,doc.observedState||'ok',JSON.stringify(meta));}
   dropSections(documentId){if(this.fts)for(const row of this.db.prepare('SELECT rowid FROM sections WHERE document_id=?').all(documentId))this.db.prepare('DELETE FROM section_fts WHERE rowid=?').run(row.rowid);this.db.prepare('DELETE FROM sections WHERE document_id=?').run(documentId);}
   indexDocument(doc){
+    if(this.documentsService){this.db.prepare('DELETE FROM audit_cache WHERE document_id IN (SELECT document_id FROM edges WHERE target=?)').run(key(doc.path));this.db.prepare("UPDATE findings SET state='stale' WHERE EXISTS(SELECT 1 FROM json_each(findings.data,'$.relatedSources') WHERE json_extract(value,'$.documentId')=? AND json_extract(value,'$.hash')!=?)").run(doc.id,doc.hash);}
     this.indexMeta(doc);this.db.prepare('DELETE FROM memberships WHERE document_id=?').run(doc.id);
     for(const root of this.roots())if(inside(root.path,doc.path))this.db.prepare('INSERT OR IGNORE INTO memberships VALUES(?,?)').run(doc.id,root.id);
     this.dropSections(doc.id);this.db.prepare('DELETE FROM edges WHERE document_id=?').run(doc.id);
@@ -117,6 +148,7 @@ export class Workbench extends LegacyWorkbench {
   watchScope(rootId,enabled){const root=this.root(rootId);this.stopWatch(rootId);if(!enabled)return {rootId,enabled:false};let timer;const schedule=()=>{clearTimeout(timer);timer=setTimeout(()=>{if(this.closed)return;if(this.scanBusy||[...this.jobs.values()].some(j=>['queued','running'].includes(j.status))){schedule();return;}this.startJob({rootId});},700);timer.unref();};const watcher=fs.watch(root.path,{recursive:true},(_event,name)=>{if(!name||name.toString().toLowerCase().endsWith('.md'))schedule();}),reconcile=setInterval(schedule,60000);reconcile.unref();watcher.on('error',e=>{if(!this.closed)this.save('watchError',{id:rootId,error:e.message,at:now()});this.stopWatch(rootId);});this.watchers.set(rootId,{watcher,clear:()=>{clearTimeout(timer);clearInterval(reconcile);}});return {rootId,enabled:true,scope:'此服務運行期間；60秒對帳漏事件；重新開啟需再啟用'};}
   stopWatch(id){const w=this.watchers?.get(id);if(w){w.clear();w.watcher.close();this.watchers.delete(id);}}
   audit({rootId='',rule='',state='',cursor='',limit=50,refresh=false}={}){
+    if(this.documentsService)return this.documentsService.audit({rootId,rule,state,cursor,limit,refresh});
     if(refresh||!this.get('meta','audit')||this.get('scan',this.get('meta','audit')?.scanId)?.id!==this.latestScan()?.id){
       const result=super.audit(),similar=similarFindings(this.list('document')),previous=new Map(this.db.prepare('SELECT * FROM findings').all().map(f=>[f.id,f]));result.findings.push(...similar.findings);
       this.transaction(()=>{this.db.prepare("UPDATE findings SET state='stale' WHERE state='open'").run();for(const f of result.findings){const doc=this.get('document',f.documentId);if(!doc)continue;const old=previous.get(f.id),prior=old?JSON.parse(old.data):{},nextState=old&&old.source_hash===doc.hash?old.state:'open';const original=f.original.slice(0,600);this.db.prepare('INSERT INTO findings VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET source_hash=excluded.source_hash,state=excluded.state,data=excluded.data').run(f.id,f.documentId,doc.hash,nextState,f.rule,JSON.stringify({...f,title:f.title.slice(0,200),original,originalTruncated:original.length<f.original.length,sourceHash:doc.hash,ruleVersion:2,origin:f.rule==='similar'?'similarity_candidate':'rule_candidate',...(prior.reviewReason?{reviewReason:prior.reviewReason,reviewOrigin:prior.reviewOrigin,evidence:prior.evidence,reviewedAt:prior.reviewedAt}:{})}));}this.save('meta',{id:'audit',scanId:this.latestScan()?.id||null,at:now(),total:result.findings.length,similarity:{comparisons:similar.comparisons,truncated:similar.truncated,pairBudget:similar.pairBudget}});});
@@ -164,6 +196,7 @@ export class Workbench extends LegacyWorkbench {
   assertInventory(){const visited=new Set();for(const root of this.roots()){const folders=[root.path];while(folders.length){const folder=folders.pop();this.assertScopeRoot(root);let entries;try{entries=fs.readdirSync(folder,{withFileTypes:true});}catch{fail('範圍不可讀，請重新索引','INDEX_STALE');}for(const entry of entries){const file=path.join(folder,entry.name);if(inside(this.dataDir,file)||entry.isSymbolicLink())continue;if(entry.isDirectory()){if(['.git','.godot','.svn','.data','.test-data','artifacts'].includes(entry.name)||(!root.includeManaged&&['node_modules','thirdparty','vendor'].includes(entry.name)))continue;const real=fs.realpathSync(file);if(!inside(root.path,real))fail('範圍連結已改變','INDEX_STALE');if(!visited.has(key(real))){visited.add(key(real));folders.push(real);}continue;}if(!entry.isFile()||!entry.name.toLowerCase().endsWith('.md'))continue;const real=fs.realpathSync(file);if(!inside(root.path,real))fail('來源連結已改變','INDEX_STALE');if(!this.db.prepare('SELECT 1 FROM document_index WHERE path=?').get(real)&&!this.list('document').some(d=>d.aliases?.includes(real)))fail(`發現未索引文件：${real}，請先重新索引`,'INDEX_STALE');}}}}
   applyPlanLocked(id,confirm){
     if(confirm!==true)fail('套用需明確確認');const plan=this.plan(id);if(plan.status==='applied')return {id,status:'applied',idempotent:true};if(plan.status!=='proposed')fail('方案不可套用');
+    this.documentsService?.checkCoverage(plan);
     for(const source of plan.sourceDocuments||[])if(this.document(source.documentId).hash!==source.expectedHash)fail('整合來源版本已改變','CONFLICT');
     for(const op of plan.operations){this.assertVersion(op,op.beforeHash);if(op.type!=='create')this.assertWritable(this.document(op.documentId));if(op.type==='delete'&&!op.moveTarget){const m=this.markFor(op.documentId,op.beforeHash);if(!m||m.status!=='pending_delete'||!m.completed||!m.confirmed||m.stale)fail('待刪除確認已變更');}if(op.moveTarget&&!plan.operations.some(o=>o.path===op.moveTarget&&o.logicalDocumentId===op.documentId))fail('移動方案不完整');}
     this.checkPlanLinks(plan.operations);plan.status='applying';this.save('plan',plan);const done=[];
@@ -173,5 +206,5 @@ export class Workbench extends LegacyWorkbench {
   putFile(op,content){const plan=this.db.prepare("SELECT id FROM records WHERE kind='plan' AND json_extract(data,'$.status')='applying' LIMIT 1").get();if(plan)this.save('journal',{id:`${plan.id}:${key(op.path)}`,planId:plan.id,path:op.path,beforeHash:op.beforeHash,afterHash:op.afterHash,phase:'writing',at:now()});if(content===null)fs.unlinkSync(op.path);else{fs.mkdirSync(path.dirname(op.path),{recursive:true});this.assertPath(op.rootId,op.path,{create:true});const temp=path.join(path.dirname(op.path),`.md-manager-${uid()}.tmp`),mode=fs.existsSync(op.path)?fs.statSync(op.path).mode&0o777:0o666;let fd;try{fd=fs.openSync(temp,'wx',mode);fs.writeFileSync(fd,content,{encoding:'utf8'});fs.fsyncSync(fd);fs.closeSync(fd);fd=undefined;fs.renameSync(temp,op.path);}finally{if(fd!==undefined)fs.closeSync(fd);if(fs.existsSync(temp))fs.unlinkSync(temp);}}if(plan)this.save('journal',{id:`${plan.id}:${key(op.path)}`,planId:plan.id,path:op.path,beforeHash:op.beforeHash,afterHash:op.afterHash,phase:'written',at:now()});}
   restorePlanLocked(id,confirm){const plan=this.plan(id);if(['recovery_required','failed'].includes(plan.status)){if(confirm!==true)fail('還原需確認');for(const op of plan.operations){const hash=fs.existsSync(op.path)?sha(fs.readFileSync(op.path)):null;if(hash!==op.beforeHash&&hash!==op.afterHash)fail(`來源已出現其他修改：${op.path}`,'CONFLICT');}plan.status='applying';this.save('plan',plan);}const result=super.restorePlanLocked(id,confirm);for(const op of plan.operations)this.refreshPath(op);return result;}
   refreshPath(op){if(!fs.existsSync(op.path)){if(!op.moveTarget&&op.documentId&&this.get('document',op.documentId)?.path===op.path)this.remove('document',op.documentId);return;}const stat=fs.statSync(op.path),content=decode(fs.readFileSync(op.path)),parsed=parseMarkdown(content),id=op.logicalDocumentId||op.documentId||sha(key(op.path)).slice(0,24);this.save('document',{id,rootId:op.rootId,path:op.path,relativePath:path.relative(this.root(op.rootId).path,op.path),title:parsed.headings[0]?.text||path.basename(op.path),...classify(op.path,parsed),...parsed,content,hash:sha(Buffer.from(content)),size:stat.size,modifiedAt:stat.mtime.toISOString(),scannedAt:now(),observedState:'ok',aliases:[],hardlinked:stat.nlink>1});}
-  close(){this.closed=true;for(const job of this.jobs.values()){job.cancelled=true;if(['queued','running'].includes(job.status)){job.status='interrupted';job.error='服務已關閉，請重新索引';this.save('job',job);}}for(const id of this.watchers.keys())this.stopWatch(id);super.close();}
+  close(){this.background?.close();this.visual?.close();this.closed=true;for(const job of this.jobs.values()){job.cancelled=true;if(['queued','running'].includes(job.status)){job.status='interrupted';job.error='服務已關閉，請重新索引';this.save('job',job);}}for(const id of this.watchers.keys())this.stopWatch(id);super.close();}
 }
