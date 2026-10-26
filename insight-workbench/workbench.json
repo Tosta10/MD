@@ -2,6 +2,6 @@
   "role": "insight",
   "name": "insight-workbench",
   "displayName": "理解工作台",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "preferredPort": 39473
 }

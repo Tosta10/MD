@@ -1,0 +1,11 @@
+{
+  "version": "3.0.1",
+  "passed": true,
+  "checks": [
+    "/guide.html 1440px: headings, navigation, no page overflow",
+    "/guide.html 390px: headings, navigation, no page overflow",
+    "/test-report.html 1440px: headings, navigation, no page overflow",
+    "/test-report.html 390px: headings, navigation, no page overflow"
+  ],
+  "pageErrors": []
+}

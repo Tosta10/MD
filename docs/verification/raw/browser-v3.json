@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "videoVerified": true,
+  "flows": [
+    "task-context",
+    "research-ingest",
+    "source-to-candidate",
+    "policy-grant",
+    "authorized-maintenance",
+    "media-import",
+    "region-decomposition",
+    "effect-recipe",
+    "actual-pixel-measurement",
+    "video-keyframes-and-contact-sheet",
+    "safe-markdown-table",
+    "persistent-draft-after-reload",
+    "original-file-unchanged",
+    "activity-history",
+    "390px-layout"
+  ],
+  "pageErrors": []
+}

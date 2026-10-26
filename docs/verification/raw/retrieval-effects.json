@@ -1,0 +1,234 @@
+{
+  "date": "2026-10-26T07:15:02.839Z",
+  "sourceCommit": "574352abcc657cd87942891404ddcd4f47091160",
+  "purpose": "targeted-synthetic-component-regression",
+  "legacyDefinition": "v2 search branch in KnowledgeStore with retrieval and budget adapters disabled; same corpus and query limits",
+  "currentDefinition": "v3 RetrievalService; no embedding, no external LLM, no query budget truncation in this isolated algorithm study",
+  "corpus": {
+    "knowledgeItems": 1579,
+    "crossScopeControlItems": 1
+  },
+  "cases": 20,
+  "legacyPassed": 4,
+  "currentPassed": 20,
+  "families": {
+    "late-title-ranking": {
+      "total": 6,
+      "legacyPassed": 0,
+      "currentPassed": 6
+    },
+    "version-prefilter": {
+      "total": 6,
+      "legacyPassed": 0,
+      "currentPassed": 6
+    },
+    "chinese-query-segmentation": {
+      "total": 4,
+      "legacyPassed": 0,
+      "currentPassed": 4
+    },
+    "exact-positive-control": {
+      "total": 2,
+      "legacyPassed": 2,
+      "currentPassed": 2
+    },
+    "scope-negative-control": {
+      "total": 1,
+      "legacyPassed": 1,
+      "currentPassed": 1
+    },
+    "expiry-negative-control": {
+      "total": 1,
+      "legacyPassed": 1,
+      "currentPassed": 1
+    }
+  },
+  "rows": [
+    {
+      "family": "late-title-ranking",
+      "query": "rank_case_0",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 4.413,
+      "currentMs": 19.675
+    },
+    {
+      "family": "late-title-ranking",
+      "query": "rank_case_1",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.478,
+      "currentMs": 8.328
+    },
+    {
+      "family": "late-title-ranking",
+      "query": "rank_case_2",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.251,
+      "currentMs": 8.379
+    },
+    {
+      "family": "late-title-ranking",
+      "query": "rank_case_3",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.552,
+      "currentMs": 8.088
+    },
+    {
+      "family": "late-title-ranking",
+      "query": "rank_case_4",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.607,
+      "currentMs": 8.15
+    },
+    {
+      "family": "late-title-ranking",
+      "query": "rank_case_5",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.69,
+      "currentMs": 8.803
+    },
+    {
+      "family": "version-prefilter",
+      "query": "version_case_0",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.294,
+      "currentMs": 11.644
+    },
+    {
+      "family": "version-prefilter",
+      "query": "version_case_1",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.146,
+      "currentMs": 8.945
+    },
+    {
+      "family": "version-prefilter",
+      "query": "version_case_2",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.054,
+      "currentMs": 8.045
+    },
+    {
+      "family": "version-prefilter",
+      "query": "version_case_3",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.303,
+      "currentMs": 8.491
+    },
+    {
+      "family": "version-prefilter",
+      "query": "version_case_4",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.139,
+      "currentMs": 18.78
+    },
+    {
+      "family": "version-prefilter",
+      "query": "version_case_5",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 9.259,
+      "currentMs": 94.226
+    },
+    {
+      "family": "chinese-query-segmentation",
+      "query": "如何改善畫面渲染效能",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 6.791,
+      "currentMs": 40.198
+    },
+    {
+      "family": "chinese-query-segmentation",
+      "query": "新任務如何套用專案經驗",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.389,
+      "currentMs": 24.415
+    },
+    {
+      "family": "chinese-query-segmentation",
+      "query": "整理文件時如何保留來源版本",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.689,
+      "currentMs": 25.314
+    },
+    {
+      "family": "chinese-query-segmentation",
+      "query": "圖片區域應該如何解構",
+      "expected": "present",
+      "legacyPassed": false,
+      "currentPassed": true,
+      "legacyMs": 1.16,
+      "currentMs": 20.154
+    },
+    {
+      "family": "exact-positive-control",
+      "query": "control_exact_0",
+      "expected": "present",
+      "legacyPassed": true,
+      "currentPassed": true,
+      "legacyMs": 1.308,
+      "currentMs": 16.356
+    },
+    {
+      "family": "exact-positive-control",
+      "query": "control_exact_1",
+      "expected": "present",
+      "legacyPassed": true,
+      "currentPassed": true,
+      "legacyMs": 1.333,
+      "currentMs": 15.097
+    },
+    {
+      "family": "scope-negative-control",
+      "query": "control_scope",
+      "expected": "absent",
+      "legacyPassed": true,
+      "currentPassed": true,
+      "legacyMs": 1.151,
+      "currentMs": 15.118
+    },
+    {
+      "family": "expiry-negative-control",
+      "query": "control_expiry",
+      "expected": "absent",
+      "legacyPassed": true,
+      "currentPassed": true,
+      "legacyMs": 1.403,
+      "currentMs": 18.988
+    }
+  ],
+  "limitations": [
+    "Cases deliberately target known defects; this is not a representative random dataset or a blind holdout.",
+    "No LLM answer generation, semantic merge quality, visual aesthetics, real-world task success or billed token savings was measured.",
+    "No claim of general 100% retrieval success, statistical significance, or permanent model learning is supported.",
+    "The v3 budget bypass is internal to this synthetic component study; real MCP budget paths remain tested separately."
+  ]
+}

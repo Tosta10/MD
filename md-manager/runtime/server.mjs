@@ -9637,7 +9637,7 @@ var CHOMPING_STRIP = CHOMPING_MODE.STRIP;
 var CHOMPING_KEEP = CHOMPING_MODE.KEEP;
 
 // src/core.mjs
-var VERSION = "3.0.0";
+var VERSION = "3.0.1";
 var CATEGORIES = ["\u4EE3\u7406\u6307\u4EE4", "Skill", "\u898F\u683C\u8207\u4F01\u5283", "\u4F7F\u7528\u8207\u64CD\u4F5C", "\u4EFB\u52D9\u5F85\u8FA6", "\u9A57\u8B49\u8207\u91CF\u6E2C", "\u7248\u672C\u8207\u7D00\u9304", "\u6388\u6B0A\u8207\u7F72\u540D", "\u5176\u4ED6\u6587\u4EF6"];
 var sha = (value) => crypto.createHash("sha256").update(value).digest("hex");
 var now = () => (/* @__PURE__ */ new Date()).toISOString();
@@ -13155,7 +13155,7 @@ async function startUi(workbench, { port = 0, role = "both" } = {}) {
         return send(res, 404, { error: "\u627E\u4E0D\u5230\u64CD\u4F5C" });
       }
       if (req.method !== "GET") return send(res, 405, { error: "\u4E0D\u652F\u63F4\u7684\u64CD\u4F5C" });
-      const assets = { "/": ["index.html", "text/html; charset=utf-8"], "/app-v2.js": ["app-v2.js", "text/javascript; charset=utf-8"], "/next-ui.js": ["next-ui.js", "text/javascript; charset=utf-8"], "/markdown.js": ["markdown.js", "text/javascript; charset=utf-8"], "/workbench.css": ["workbench.css", "text/css; charset=utf-8"], "/favicon.svg": ["favicon.svg", "image/svg+xml"] };
+      const assets = { "/guide.html": ["guide.html", "text/html; charset=utf-8"], "/test-report.html": ["test-report.html", "text/html; charset=utf-8"], "/guide.css": ["guide.css", "text/css; charset=utf-8"], "/": ["index.html", "text/html; charset=utf-8"], "/app-v2.js": ["app-v2.js", "text/javascript; charset=utf-8"], "/next-ui.js": ["next-ui.js", "text/javascript; charset=utf-8"], "/markdown.js": ["markdown.js", "text/javascript; charset=utf-8"], "/workbench.css": ["workbench.css", "text/css; charset=utf-8"], "/favicon.svg": ["favicon.svg", "image/svg+xml"] };
       const asset = assets[url.pathname];
       if (!asset) return send(res, 404, { error: "\u627E\u4E0D\u5230\u9801\u9762" });
       let content3 = fs4.readFileSync(path4.join(publicDir, asset[0]));

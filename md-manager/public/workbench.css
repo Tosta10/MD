@@ -65,3 +65,5 @@ details>summary{cursor:pointer;padding:8px 0}
 
 
 .tabs button.active,.switch button.active{color:#9dd1ff}.nav button.active{color:#f5f8ff}a{color:#9dd1ff}input::placeholder,textarea::placeholder{color:#a5b8d6;opacity:1}.reading-paper a{color:#174db8}
+
+.help-links{display:flex;gap:8px;flex-wrap:wrap}.help-links a{display:inline-flex;align-items:center;min-height:42px;padding:8px 12px;border:1px solid #4974b1;border-radius:8px;background:#123462;color:#fff;text-decoration:none;font-weight:650}.help-links a:hover{background:#1e4e8b}

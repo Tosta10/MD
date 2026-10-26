@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "flows": [
+    "no density toggle",
+    "previous/last/jump pagination",
+    "page size",
+    "indeterminate select all",
+    "cross-page page selection",
+    "cancel selection preserves files",
+    "select all filtered results",
+    "125-document atomic mark",
+    "merge limit explanation",
+    "invert page",
+    "modal error and retained input",
+    "loading feedback and duplicate submit guard",
+    "390px layout"
+  ],
+  "pageErrors": []
+}

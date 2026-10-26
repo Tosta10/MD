@@ -63,7 +63,7 @@ export async function startUi(workbench, { port = 0, role = 'both' } = {}) {
         return send(res, 404, { error: '找不到操作' });
       }
       if (req.method !== 'GET') return send(res, 405, { error: '不支援的操作' });
-      const assets = { '/': ['index.html','text/html; charset=utf-8'], '/app-v2.js':['app-v2.js','text/javascript; charset=utf-8'], '/next-ui.js':['next-ui.js','text/javascript; charset=utf-8'], '/markdown.js':['markdown.js','text/javascript; charset=utf-8'], '/workbench.css':['workbench.css','text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg','image/svg+xml'] };
+      const assets = { '/guide.html':['guide.html','text/html; charset=utf-8'], '/test-report.html':['test-report.html','text/html; charset=utf-8'], '/guide.css':['guide.css','text/css; charset=utf-8'], '/': ['index.html','text/html; charset=utf-8'], '/app-v2.js':['app-v2.js','text/javascript; charset=utf-8'], '/next-ui.js':['next-ui.js','text/javascript; charset=utf-8'], '/markdown.js':['markdown.js','text/javascript; charset=utf-8'], '/workbench.css':['workbench.css','text/css; charset=utf-8'], '/favicon.svg': ['favicon.svg','image/svg+xml'] };
       const asset = assets[url.pathname]; if (!asset) return send(res, 404, { error: '找不到頁面' });
       let content = fs.readFileSync(path.join(publicDir, asset[0]));
       if (url.pathname === '/') content = Buffer.from(content.toString().replace('__WORKBENCH_TOKEN__', token));

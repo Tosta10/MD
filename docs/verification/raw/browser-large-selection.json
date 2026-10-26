@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "files": 2030,
+  "flows": [
+    "snapshot-selection",
+    "per-row-exclusion",
+    "cancel-selection",
+    "background-mark-originals-preserved"
+  ],
+  "pageErrors": []
+}

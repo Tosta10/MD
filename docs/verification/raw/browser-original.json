@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "flows": [
+    "scope",
+    "background incremental index",
+    "mark",
+    "form draft preservation",
+    "delete and restore",
+    "cross-page selection",
+    "merge coverage",
+    "file move",
+    "finding disposition",
+    "knowledge XSS",
+    "revision downgrade",
+    "knowledge trash and restore",
+    "task revision",
+    "method choice",
+    "learning report",
+    "domain source revisions",
+    "visual comparison",
+    "390px layout"
+  ],
+  "pageErrors": []
+}

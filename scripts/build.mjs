@@ -1,3 +1,4 @@
+import './render-guides.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -35,6 +36,7 @@ for(const [name,displayName,role,color] of plugins){
   fs.copyFileSync(path.join(root,'docs/contracts/maintenance.md'),path.join(dir,'skills',name,'references/maintenance.md'));
   json(path.join(dir,'mcp.portable.json'),{mcpServers:{[name]:{command:'node',args:['${PLUGIN_ROOT}/runtime/mcp.mjs','--role',role],cwd:'${PLUGIN_ROOT}'}}});
 
+  fs.copyFileSync(path.join(root,'使用手冊.md'),path.join(dir,'使用手冊.md'));
   fs.cpSync(path.join(root,'public'),path.join(dir,'public'),{recursive:true});
   fs.cpSync(path.join(root,'dist'),path.join(dir,'runtime'),{recursive:true});
   fs.copyFileSync(path.join(root,'scripts','Start-Mcp.ps1'),path.join(dir,'scripts','Start-Mcp.ps1'));
