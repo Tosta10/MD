@@ -69,8 +69,28 @@ export class VisualService {
     this.w.save('asset', item); const { file, ...meta } = item; return meta;
   }
   list(input = {}) {
-    const assets = page(this.w, 'asset', input, ({ file, ...a }) => a);
-    return { ...assets, assets: assets.items, comparisons: page(this.w,'comparison',input,c=>({id:c.id,title:c.title,scope:c.scope,leftAssetId:c.leftAssetId,rightAssetId:c.rightAssetId,preferred:c.preferred,notes:c.notes?.map(v=>v.slice(0,300)).slice(0,4),at:c.at})).items, nextOffset: assets.hasMore ? assets.offset + assets.limit : null };
+    const assets = page(this.w, 'asset', { ...input, lifecycle: input.lifecycle || 'active' }, ({ file, ...a }) => a);
+    return { ...assets, assets: assets.items, comparisons: page(this.w,'comparison',{...input,offset:0,lifecycle:input.lifecycle||'active'},c=>({id:c.id,revision:c.revision||1,title:c.title,scope:c.scope,leftAssetId:c.leftAssetId,rightAssetId:c.rightAssetId,preferred:c.preferred,notes:c.notes?.map(v=>v.slice(0,300)).slice(0,4),at:c.at})).items, nextOffset: assets.hasMore ? assets.offset + assets.limit : null };
+  }
+  setAssetState(input) {
+    return this.w.transaction(() => {
+      const asset = this.w.asset(input.id);
+      if (!Number.isInteger(input.expectedRevision) || (asset.revision || 1) !== input.expectedRevision) fail('素材已更新，請重新整理後再試', 'CONFLICT');
+      if (!['active','trashed'].includes(input.lifecycle)) fail('素材狀態不正確');
+      const saved = { ...asset, lifecycle:input.lifecycle, revision:(asset.revision || 1)+1, updatedAt:now() };
+      this.w.save('asset',saved);
+      const {file,...result}=saved;return result;
+    });
+  }
+  setRecordState(input) {
+    const kinds=['comparison','observation','recipe','timeline','visualEvaluation'];
+    if (!kinds.includes(input.kind) || !['active','trashed'].includes(input.lifecycle)) fail('紀錄種類或狀態不正確');
+    return this.w.transaction(()=>{
+      const item=this.w.get(input.kind,input.id);if(!item)fail('紀錄不存在','NOT_FOUND');
+      if (!Number.isInteger(input.expectedRevision)||(item.revision||1)!==input.expectedRevision)fail('紀錄已更新，請重新整理','CONFLICT');
+      const updated={...item,lifecycle:input.lifecycle,revision:(item.revision||1)+1,updatedAt:now()};
+      this.w.save(input.kind,updated);return {id:updated.id,revision:updated.revision,lifecycle:updated.lifecycle};
+    });
   }
   save(input) {
     const kind = input.kind;
@@ -116,7 +136,7 @@ export class VisualService {
   }
   records(input) {
     if(!['observation','recipe','timeline','visualEvaluation'].includes(input.kind))fail('紀錄類型不正確');
-    return page(this.w,input.kind,input,item=>({id:item.id,revision:item.revision,title:item.title,scope:item.scope,lifecycle:item.lifecycle,assetIds:item.assetIds.slice(0,3),assetCount:item.assetIds.length,summary:item.observations?.[0]?.slice(0,200),stack:item.stack,updatedAt:item.updatedAt}));
+    return page(this.w,input.kind,{...input,lifecycle:input.lifecycle||'active'},item=>({id:item.id,revision:item.revision,title:item.title,scope:item.scope,lifecycle:item.lifecycle,assetIds:item.assetIds.slice(0,3),assetCount:item.assetIds.length,summary:item.observations?.[0]?.slice(0,200),stack:item.stack,updatedAt:item.updatedAt}));
   }
   readRecord(input) {
     if(!['observation','recipe','timeline','visualEvaluation'].includes(input.kind))fail('紀錄類型不正確');

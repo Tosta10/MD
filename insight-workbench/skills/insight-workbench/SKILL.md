@@ -10,6 +10,7 @@ description: Clarify current requirements and retrieve applicable knowledge when
 工具尚未揭露時，先用 get_workbench_capabilities 查詢並載入需要的群組；刷新工具列表後使用。宿主不支援動態列表時，以 WORKBENCH_TOOL_PROFILE=all 連線。
 
 - 需求、未知、驗收與任務脈絡：讀 [tasks.md](references/tasks.md)。
+- 對複雜或含重要未知的實作任務，需要進一步探索或驗證時，可使用同插件的 [task-harness](../task-harness/SKILL.md)；一般簡單任務不需載入。
 - 研究入庫、適用條件及知識版本：讀 [experience.md](references/experience.md)。
 - 靜態／動態畫面、實作配方及評價：讀 [visual.md](references/visual.md)。
 - 自主整合、封存及恢復：讀 [maintenance.md](references/maintenance.md)。

@@ -17,8 +17,11 @@ export class SourceService {
       if (!['active', 'archived', 'pending_delete', 'trashed'].includes(item.lifecycle)) fail('來源狀態不正確');
       this.w.db.prepare('DELETE FROM source_chunks WHERE source_id=?').run(item.id);
       const sections = content.split(/(?=^#{1,6}\s)/m);
-      let part = 0;
-      for (const section of sections) for (let start = 0; start < section.length; start += 1800) this.w.db.prepare('INSERT INTO source_chunks VALUES(?,?,?,?,?,?,?)').run(item.id + ':' + part++, item.id, selected, item.revision, title, section.slice(start, start + 1800), 'offset:' + content.indexOf(section) + '+' + start);
+      let part = 0, sectionOffset = 0;
+      for (const section of sections) {
+        for (let start = 0; start < section.length; start += 1800) this.w.db.prepare('INSERT INTO source_chunks VALUES(?,?,?,?,?,?,?)').run(item.id + ':' + part++, item.id, selected, item.revision, title, section.slice(start, start + 1800), 'offset:' + sectionOffset + '+' + start);
+        sectionOffset += section.length;
+      }
       if (old && (old.contentHash !== item.contentHash || item.lifecycle !== 'active')) {
         for (const row of this.w.db.prepare("SELECT data FROM records WHERE kind='memory' AND EXISTS(SELECT 1 FROM json_each(data,'$.externalSourceRefs') WHERE json_extract(value,'$.id')=?)").all(item.id)) {
           const knowledge = JSON.parse(row.data);
@@ -50,7 +53,7 @@ export class ContextService {
   constructor(w) { this.w = w; }
   compile(input){return this.w.transaction(()=>this.compileLocked(input));}
   compileLocked(input) {
-    const request = text(input.request, '原始需求', 14000);
+    text(input.request, '原始需求', 14000); const request = input.request;
     const task = this.w.createTask({ title: input.title || request.slice(0, 60), goal: input.goal || request.slice(0, 1000), request, scope: scope(this.w, input.scope || 'personal'), constraints: strings(input.constraints), deliverables: strings(input.deliverables), criteria: strings(input.criteria), assumptions: strings(input.assumptions), unknowns: strings(input.unknowns), environment: input.environment || {}, domains: strings(input.domains) });
     this.w.save('taskRequest', { id: task.id + ':1', taskId: task.id, taskRevision: task.revision, request, hash: hash(request), at: now() });
     return this.explain(task.id);

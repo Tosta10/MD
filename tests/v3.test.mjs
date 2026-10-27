@@ -19,8 +19,42 @@ function fixture(t) {
   return { base, project, data, w, root, write, doc: name => w.list('document').find(d => d.relativePath === name) };
 }
 const memory = extra => ({ title: '渲染方法', content: '相機渲染需要驗證框架版本及場景。', type: 'method', source: 'user:fixture', appliesWhen: '相機渲染', reviewState: 'validated', evidence: '隔離案例已驗證', ...extra });
+test('source chunk locators point to each occurrence of repeated sections', t => {
+  const f = fixture(t), section = '# 重複標題\n相同內容\n', content = section + section;
+  const source = f.w.sources.save({title:'重複片段',uri:'user:fixture',scope:f.root.id,content});
+  const rows=f.w.db.prepare('SELECT body,locator FROM source_chunks WHERE source_id=? ORDER BY rowid').all(source.id);
+  assert.equal(rows.length,2);
+  for (const row of rows) { const m=/^offset:(\d+)\+(\d+)$/.exec(row.locator); assert.ok(m); assert.equal(content.slice(Number(m[1])+Number(m[2]),Number(m[1])+Number(m[2])+row.body.length),row.body); }
+  assert.notEqual(rows[0].locator,rows[1].locator);
+});
 test('compact MCP tools reveal only requested groups and preserve the full-host fallback',()=>{const catalog=new ToolCatalog('insight','compact'),initial=catalog.list();assert.ok(initial.length<20);assert.equal(catalog.has('read_visual_reference'),false);assert.equal(catalog.activate(['visual']).changed,true);assert.equal(catalog.has('read_visual_reference'),true);assert.equal(catalog.activate(['visual']).changed,false);assert.equal(catalog.has('set_merge_coverage'),false);const full=new ToolCatalog('insight','all');assert.equal(full.list().length,definitions('insight').length+1);});
 function image(w, scope, name = 'image.png') { const png = new PNG({ width: 64, height: 32 }); for (let i = 0; i < png.data.length; i += 4) { png.data[i] = 36; png.data[i + 1] = 99; png.data[i + 2] = 235; png.data[i + 3] = 255; } return w.visual.import({ base64: PNG.sync.write(png).toString('base64'), scope, name }); }
+test('visual deletion is reversible, version checked, and preserves shared binaries', t => {
+  const f=fixture(t),a=image(f.w,f.root.id),b=image(f.w,f.root.id,'duplicate.png');
+  const file=f.w.asset(a.id).file; assert.equal(file,f.w.asset(b.id).file);
+  assert.throws(()=>f.w.visual.setAssetState({id:a.id,expectedRevision:0,lifecycle:'trashed'}),e=>e.code==='CONFLICT');
+  f.w.visual.setAssetState({id:a.id,expectedRevision:1,lifecycle:'trashed'});
+  assert.ok(fs.existsSync(file));assert.ok(!f.w.visual.list({scope:f.root.id}).assets.some(x=>x.id===a.id));
+  assert.ok(f.w.visual.list({scope:f.root.id,lifecycle:'trashed'}).assets.some(x=>x.id===a.id));
+  f.w.visual.setAssetState({id:a.id,expectedRevision:2,lifecycle:'active'});
+  assert.ok(f.w.visual.list({scope:f.root.id}).assets.some(x=>x.id===a.id));assert.ok(fs.existsSync(file));
+});
+test('comparison and visual records can be trashed and restored without deleting assets', t => {
+  const f=fixture(t),a=image(f.w,f.root.id),b=image(f.w,f.root.id,'other.png');
+  const c=f.w.saveComparison({title:'比較',scope:f.root.id,leftAssetId:a.id,rightAssetId:b.id,notes:['測試']});
+  f.w.visual.setRecordState({kind:'comparison',id:c.id,expectedRevision:1,lifecycle:'trashed'});
+  assert.ok(!f.w.visual.list({scope:f.root.id}).comparisons.some(x=>x.id===c.id));
+  assert.ok(f.w.visual.list({scope:f.root.id,lifecycle:'trashed'}).comparisons.some(x=>x.id===c.id));
+  assert.throws(()=>f.w.visual.setRecordState({kind:'comparison',id:c.id,expectedRevision:1,lifecycle:'active'}),e=>e.code==='CONFLICT');
+  f.w.visual.setRecordState({kind:'comparison',id:c.id,expectedRevision:2,lifecycle:'active'});
+  assert.ok(f.w.visual.list({scope:f.root.id}).comparisons.some(x=>x.id===c.id));
+  const r=f.w.visual.save({kind:'observation',scope:f.root.id,title:'區域',assetIds:[a.id],observations:['內容']});
+  f.w.visual.setRecordState({kind:'observation',id:r.id,expectedRevision:r.revision,lifecycle:'trashed'});
+  assert.equal(f.w.visual.records({kind:'observation',scope:f.root.id}).items.length,0);
+  assert.equal(f.w.visual.records({kind:'observation',scope:f.root.id,lifecycle:'trashed'}).items.length,1);
+  f.w.visual.setRecordState({kind:'observation',id:r.id,expectedRevision:r.revision+1,lifecycle:'active'});
+  assert.equal(f.w.visual.records({kind:'observation',scope:f.root.id}).items.length,1);assert.ok(fs.existsSync(f.w.asset(a.id).file));
+});
 
 test('v3 snapshots v2 and never writes back into the running old database', t => {
   const base = fs.mkdtempSync(path.join(parent, 'migration3-')), data = path.join(base, 'data'), old = new Legacy(data, { databaseName: 'workbench-v2.sqlite' });
@@ -72,6 +106,12 @@ test('task compilation preserves original request and old task revisions; contex
   assert.equal(f.w.get('taskRevision', task.id + ':1').goal, '相機渲染');
   assert.equal(f.w.get('taskRevision', task.id + ':1').request, compiled.originalRequest);
   assert.throws(() => f.w.contextService.build({ taskId: task.id, expectedRevision: 2, runId: run.runId }), e => e.code === 'CONFLICT');
+});
+test('long task requests retain exact original text and reject oversize input', t => {
+  const f=fixture(t),request='  '+('甲'.repeat(10001))+'\n';
+  const r=f.w.contextService.compile({request,title:'長需求',scope:f.root.id});
+  assert.equal(r.originalRequest,request);assert.equal(f.w.get('taskRequest',r.task.id+':1').request,request);
+  assert.throws(()=>f.w.contextService.compile({request:'甲'.repeat(14001),scope:f.root.id}),/14000/);
 });
 
 test('read budgets apply to implicit runs, cross-scope reads, and reject unknown bypass arguments', async t => {

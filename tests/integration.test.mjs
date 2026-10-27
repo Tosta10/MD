@@ -54,5 +54,5 @@ for(const role of ['md','insight'])test('portable Node '+role+' starts without P
   t.after(async()=>{await client.close();cleanup(dir);});await client.connect(transport);
   const tools=await client.listTools();assert.ok(tools.tools.length>30);
   const discovery=await client.callTool({name:'get_workbench_capabilities',arguments:{groups:['all']}});assert.equal(JSON.parse(discovery.content[0].text).changed,false);
-  const overview=await client.callTool({name:'get_overview',arguments:{}});assert.equal(JSON.parse(overview.content[0].text).version,'3.0.1');
+  const overview=await client.callTool({name:'get_overview',arguments:{}});assert.equal(JSON.parse(overview.content[0].text).version,'3.0.5');
 });

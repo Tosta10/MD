@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-27T12:51:33.046Z",
+  "modelCalls": 0,
+  "limitations": "Synthetic component tests; control is custom Node code; ceiling is not failure.",
+  "results": [
+    {
+      "domain": "task",
+      "arm": "plugin",
+      "steps": [
+        {
+          "size": 100,
+          "passed": true
+        },
+        {
+          "size": 1000,
+          "passed": true
+        },
+        {
+          "size": 5000,
+          "passed": true
+        },
+        {
+          "size": 10001,
+          "passed": true
+        },
+        {
+          "size": 14001,
+          "passed": false,
+          "error": "原始需求需填寫，最多 14000 字"
+        }
+      ],
+      "stop": "failed"
+    },
+    {
+      "domain": "task",
+      "arm": "control",
+      "steps": [
+        {
+          "size": 100,
+          "passed": true
+        },
+        {
+          "size": 1000,
+          "passed": true
+        },
+        {
+          "size": 5000,
+          "passed": true
+        },
+        {
+          "size": 10001,
+          "passed": true
+        },
+        {
+          "size": 14001,
+          "passed": true
+        }
+      ],
+      "stop": "ceiling_reached"
+    },
+    {
+      "domain": "knowledge",
+      "arm": "plugin",
+      "steps": [
+        {
+          "size": 1,
+          "passed": true
+        },
+        {
+          "size": 20,
+          "passed": true
+        },
+        {
+          "size": 60,
+          "passed": true
+        },
+        {
+          "size": 130,
+          "passed": true
+        },
+        {
+          "size": 250,
+          "passed": true
+        }
+      ],
+      "stop": "ceiling_reached"
+    },
+    {
+      "domain": "knowledge",
+      "arm": "control",
+      "steps": [
+        {
+          "size": 1,
+          "passed": true
+        },
+        {
+          "size": 20,
+          "passed": true
+        },
+        {
+          "size": 60,
+          "passed": true
+        },
+        {
+          "size": 130,
+          "passed": true
+        },
+        {
+          "size": 250,
+          "passed": true
+        }
+      ],
+      "stop": "ceiling_reached"
+    },
+    {
+      "domain": "visual",
+      "arm": "plugin",
+      "steps": [
+        {
+          "size": 1,
+          "passed": true
+        },
+        {
+          "size": 5,
+          "passed": true
+        },
+        {
+          "size": 10,
+          "passed": true
+        },
+        {
+          "size": 20,
+          "passed": true
+        },
+        {
+          "size": 21,
+          "passed": false,
+          "error": "素材格式不正確"
+        }
+      ],
+      "stop": "failed"
+    },
+    {
+      "domain": "visual",
+      "arm": "control",
+      "steps": [
+        {
+          "size": 1,
+          "passed": true
+        },
+        {
+          "size": 5,
+          "passed": true
+        },
+        {
+          "size": 10,
+          "passed": true
+        },
+        {
+          "size": 20,
+          "passed": true
+        },
+        {
+          "size": 21,
+          "passed": true
+        }
+      ],
+      "stop": "ceiling_reached"
+    },
+    {
+      "domain": "source",
+      "arm": "plugin",
+      "steps": [
+        {
+          "size": 100,
+          "passed": true
+        },
+        {
+          "size": 1000,
+          "passed": true
+        },
+        {
+          "size": 10000,
+          "passed": true
+        },
+        {
+          "size": 40000,
+          "passed": true
+        },
+        {
+          "size": 64001,
+          "passed": false,
+          "error": "來源內容需填寫，最多 64000 字"
+        }
+      ],
+      "stop": "failed"
+    },
+    {
+      "domain": "source",
+      "arm": "control",
+      "steps": [
+        {
+          "size": 100,
+          "passed": true
+        },
+        {
+          "size": 1000,
+          "passed": true
+        },
+        {
+          "size": 10000,
+          "passed": true
+        },
+        {
+          "size": 40000,
+          "passed": true
+        },
+        {
+          "size": 64001,
+          "passed": true
+        }
+      ],
+      "stop": "ceiling_reached"
+    }
+  ]
+}

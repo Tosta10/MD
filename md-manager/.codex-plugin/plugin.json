@@ -1,6 +1,6 @@
 {
   "name": "md-manager",
-  "version": "3.0.1",
+  "version": "3.0.5",
   "description": "盤點與分類 Markdown、檢查指令、標註已完成與待刪除文件，預覽並還原變更。",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",

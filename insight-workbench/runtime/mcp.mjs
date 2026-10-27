@@ -17088,7 +17088,7 @@ function page(w, kind, { scope: requested = "", query = "", offset = 0, limit = 
     params.push(`%${String(query).replace(/[\\%_]/g, "\\$&")}%`, query);
   }
   if (lifecycle) {
-    where.push("json_extract(data,'$.lifecycle')=?");
+    where.push("COALESCE(json_extract(data,'$.lifecycle'),'active')=?");
     params.push(lifecycle);
   }
   const total = w.db.prepare(`SELECT count(*) n FROM records WHERE ${where.join(" AND ")}`).get(...params).n;
@@ -27121,7 +27121,7 @@ var CHOMPING_STRIP = CHOMPING_MODE.STRIP;
 var CHOMPING_KEEP = CHOMPING_MODE.KEEP;
 
 // src/core.mjs
-var VERSION = "3.0.1";
+var VERSION = "3.0.5";
 var CATEGORIES = ["\u4EE3\u7406\u6307\u4EE4", "Skill", "\u898F\u683C\u8207\u4F01\u5283", "\u4F7F\u7528\u8207\u64CD\u4F5C", "\u4EFB\u52D9\u5F85\u8FA6", "\u9A57\u8B49\u8207\u91CF\u6E2C", "\u7248\u672C\u8207\u7D00\u9304", "\u6388\u6B0A\u8207\u7F72\u540D", "\u5176\u4ED6\u6587\u4EF6"];
 var sha = (value) => crypto2.createHash("sha256").update(value).digest("hex");
 var now2 = () => (/* @__PURE__ */ new Date()).toISOString();
@@ -27666,7 +27666,7 @@ ${d.plain}`.toLowerCase();
     const title = required2(input.title, "\u4EFB\u52D9\u540D\u7A31", 200), goal = required2(input.goal, "\u76EE\u7684", 4e3);
     const scope2 = input.scope || "personal";
     if (scope2 !== "personal") this.root(scope2);
-    return this.save("task", { id: uid2(), title, goal, request: input.request?.slice(0, 1e4) || "", scope: scope2, constraints: values2(input.constraints || [], "\u9650\u5236"), deliverables: values2(input.deliverables || [], "\u4EA4\u4ED8\u7269"), criteria: values2(input.criteria || [], "\u5B8C\u6210\u689D\u4EF6").map((text5) => ({ id: uid2(), text: text5, status: "pending", evidence: "" })), status: "active", corrections: [], feedback: [], createdAt: now2(), updatedAt: now2() });
+    return this.save("task", { id: uid2(), title, goal, request: input.request ? (required2(input.request, "\u539F\u59CB\u9700\u6C42", 14e3), input.request) : "", scope: scope2, constraints: values2(input.constraints || [], "\u9650\u5236"), deliverables: values2(input.deliverables || [], "\u4EA4\u4ED8\u7269"), criteria: values2(input.criteria || [], "\u5B8C\u6210\u689D\u4EF6").map((text5) => ({ id: uid2(), text: text5, status: "pending", evidence: "" })), status: "active", corrections: [], feedback: [], createdAt: now2(), updatedAt: now2() });
   }
   updateTask(input) {
     const task = this.get("task", input.id);
@@ -28480,8 +28480,11 @@ var SourceService = class {
       if (!["active", "archived", "pending_delete", "trashed"].includes(item.lifecycle)) fail("\u4F86\u6E90\u72C0\u614B\u4E0D\u6B63\u78BA");
       this.w.db.prepare("DELETE FROM source_chunks WHERE source_id=?").run(item.id);
       const sections = content3.split(/(?=^#{1,6}\s)/m);
-      let part = 0;
-      for (const section of sections) for (let start = 0; start < section.length; start += 1800) this.w.db.prepare("INSERT INTO source_chunks VALUES(?,?,?,?,?,?,?)").run(item.id + ":" + part++, item.id, selected, item.revision, title, section.slice(start, start + 1800), "offset:" + content3.indexOf(section) + "+" + start);
+      let part = 0, sectionOffset = 0;
+      for (const section of sections) {
+        for (let start = 0; start < section.length; start += 1800) this.w.db.prepare("INSERT INTO source_chunks VALUES(?,?,?,?,?,?,?)").run(item.id + ":" + part++, item.id, selected, item.revision, title, section.slice(start, start + 1800), "offset:" + sectionOffset + "+" + start);
+        sectionOffset += section.length;
+      }
       if (old && (old.contentHash !== item.contentHash || item.lifecycle !== "active")) {
         for (const row of this.w.db.prepare("SELECT data FROM records WHERE kind='memory' AND EXISTS(SELECT 1 FROM json_each(data,'$.externalSourceRefs') WHERE json_extract(value,'$.id')=?)").all(item.id)) {
           const knowledge = JSON.parse(row.data);
@@ -28519,7 +28522,8 @@ var ContextService = class {
     return this.w.transaction(() => this.compileLocked(input));
   }
   compileLocked(input) {
-    const request = text(input.request, "\u539F\u59CB\u9700\u6C42", 14e3);
+    text(input.request, "\u539F\u59CB\u9700\u6C42", 14e3);
+    const request = input.request;
     const task = this.w.createTask({ title: input.title || request.slice(0, 60), goal: input.goal || request.slice(0, 1e3), request, scope: scope(this.w, input.scope || "personal"), constraints: strings(input.constraints), deliverables: strings(input.deliverables), criteria: strings(input.criteria), assumptions: strings(input.assumptions), unknowns: strings(input.unknowns), environment: input.environment || {}, domains: strings(input.domains) });
     this.w.save("taskRequest", { id: task.id + ":1", taskId: task.id, taskRevision: task.revision, request, hash: hash(request), at: now() });
     return this.explain(task.id);
@@ -28682,8 +28686,31 @@ var VisualService = class {
     return meta2;
   }
   list(input = {}) {
-    const assets = page(this.w, "asset", input, ({ file, ...a }) => a);
-    return { ...assets, assets: assets.items, comparisons: page(this.w, "comparison", input, (c) => ({ id: c.id, title: c.title, scope: c.scope, leftAssetId: c.leftAssetId, rightAssetId: c.rightAssetId, preferred: c.preferred, notes: c.notes?.map((v) => v.slice(0, 300)).slice(0, 4), at: c.at })).items, nextOffset: assets.hasMore ? assets.offset + assets.limit : null };
+    const assets = page(this.w, "asset", { ...input, lifecycle: input.lifecycle || "active" }, ({ file, ...a }) => a);
+    return { ...assets, assets: assets.items, comparisons: page(this.w, "comparison", { ...input, offset: 0, lifecycle: input.lifecycle || "active" }, (c) => ({ id: c.id, revision: c.revision || 1, title: c.title, scope: c.scope, leftAssetId: c.leftAssetId, rightAssetId: c.rightAssetId, preferred: c.preferred, notes: c.notes?.map((v) => v.slice(0, 300)).slice(0, 4), at: c.at })).items, nextOffset: assets.hasMore ? assets.offset + assets.limit : null };
+  }
+  setAssetState(input) {
+    return this.w.transaction(() => {
+      const asset = this.w.asset(input.id);
+      if (!Number.isInteger(input.expectedRevision) || (asset.revision || 1) !== input.expectedRevision) fail("\u7D20\u6750\u5DF2\u66F4\u65B0\uFF0C\u8ACB\u91CD\u65B0\u6574\u7406\u5F8C\u518D\u8A66", "CONFLICT");
+      if (!["active", "trashed"].includes(input.lifecycle)) fail("\u7D20\u6750\u72C0\u614B\u4E0D\u6B63\u78BA");
+      const saved = { ...asset, lifecycle: input.lifecycle, revision: (asset.revision || 1) + 1, updatedAt: now() };
+      this.w.save("asset", saved);
+      const { file, ...result } = saved;
+      return result;
+    });
+  }
+  setRecordState(input) {
+    const kinds = ["comparison", "observation", "recipe", "timeline", "visualEvaluation"];
+    if (!kinds.includes(input.kind) || !["active", "trashed"].includes(input.lifecycle)) fail("\u7D00\u9304\u7A2E\u985E\u6216\u72C0\u614B\u4E0D\u6B63\u78BA");
+    return this.w.transaction(() => {
+      const item = this.w.get(input.kind, input.id);
+      if (!item) fail("\u7D00\u9304\u4E0D\u5B58\u5728", "NOT_FOUND");
+      if (!Number.isInteger(input.expectedRevision) || (item.revision || 1) !== input.expectedRevision) fail("\u7D00\u9304\u5DF2\u66F4\u65B0\uFF0C\u8ACB\u91CD\u65B0\u6574\u7406", "CONFLICT");
+      const updated = { ...item, lifecycle: input.lifecycle, revision: (item.revision || 1) + 1, updatedAt: now() };
+      this.w.save(input.kind, updated);
+      return { id: updated.id, revision: updated.revision, lifecycle: updated.lifecycle };
+    });
   }
   save(input) {
     const kind = input.kind;
@@ -28741,7 +28768,7 @@ var VisualService = class {
   }
   records(input) {
     if (!["observation", "recipe", "timeline", "visualEvaluation"].includes(input.kind)) fail("\u7D00\u9304\u985E\u578B\u4E0D\u6B63\u78BA");
-    return page(this.w, input.kind, input, (item) => ({ id: item.id, revision: item.revision, title: item.title, scope: item.scope, lifecycle: item.lifecycle, assetIds: item.assetIds.slice(0, 3), assetCount: item.assetIds.length, summary: item.observations?.[0]?.slice(0, 200), stack: item.stack, updatedAt: item.updatedAt }));
+    return page(this.w, input.kind, { ...input, lifecycle: input.lifecycle || "active" }, (item) => ({ id: item.id, revision: item.revision, title: item.title, scope: item.scope, lifecycle: item.lifecycle, assetIds: item.assetIds.slice(0, 3), assetCount: item.assetIds.length, summary: item.observations?.[0]?.slice(0, 200), stack: item.stack, updatedAt: item.updatedAt }));
   }
   readRecord(input) {
     if (!["observation", "recipe", "timeline", "visualEvaluation"].includes(input.kind)) fail("\u7D00\u9304\u985E\u578B\u4E0D\u6B63\u78BA");
@@ -30225,6 +30252,16 @@ async function startUi(workbench2, { port = 0, role: role2 = "both" } = {}) {
           if (typeof input.base64 !== "string") throw new Error("\u9700\u8981\u5716\u7247\u8CC7\u6599");
           const { file, ...asset2 } = workbench2.visual ? workbench2.visual.import(input) : workbench2.addAsset(Buffer.from(input.base64, "base64"), input.name);
           return send(res, 200, { result: asset2 });
+        }
+        if (url.pathname === "/api/visual-asset-list" && role2 !== "md") return send(res, 200, { result: workbench2.visual.list(input) });
+        if (url.pathname === "/api/visual-asset-state" && role2 !== "md") return send(res, 200, { result: workbench2.visual.setAssetState(input) });
+        if (url.pathname === "/api/visual-record-state" && role2 !== "md") return send(res, 200, { result: workbench2.visual.setRecordState(input) });
+        if (url.pathname === "/api/visual-record-list" && role2 !== "md") return send(res, 200, { result: workbench2.visual.records(input) });
+        if (url.pathname === "/api/source-state" && role2 !== "md") {
+          if (!["active", "trashed"].includes(input.lifecycle)) throw new Error("\u72C0\u614B\u4E0D\u6B63\u78BA");
+          const item = workbench2.get("source", input.id);
+          if (!item) throw new Error("\u4F86\u6E90\u4E0D\u5B58\u5728");
+          return send(res, 200, { result: workbench2.sources.save({ id: input.id, expectedRevision: input.expectedRevision, lifecycle: input.lifecycle }) });
         }
         if (url.pathname === "/api/delete-memory" && role2 !== "md") return send(res, 200, { result: workbench2.deleteMemory(input.id, input.expectedRevision) });
         return send(res, 404, { error: "\u627E\u4E0D\u5230\u64CD\u4F5C" });

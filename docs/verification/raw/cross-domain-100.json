@@ -1,0 +1,709 @@
+{
+  "date": "2026-10-27T12:41:51.516Z",
+  "kind": "synthetic-component-checks",
+  "modelCalls": 0,
+  "baseline": "not_measured",
+  "warning": "No-plugin AI or manual workflows not run. These are correlated variations, not 100 independent real tasks.",
+  "results": [
+    {
+      "domain": "需求與問題處理",
+      "id": "T1",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T2",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T3",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T4",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T5",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T6",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T7",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T8",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T9",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T10",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T11",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T12",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T13",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T14",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T15",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T16",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T17",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T18",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T19",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T20",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T21",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T22",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T23",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T24",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T25",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "原文、限制、驗收及未知可回讀"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K1",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K2",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K3",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K4",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K5",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K6",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K7",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K8",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K9",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K10",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K11",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K12",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K13",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K14",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K15",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K16",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K17",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K18",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K19",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K20",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K21",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K22",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K23",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K24",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K25",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "依查詢找回指定知識"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V1",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V2",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V3",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V4",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V5",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V6",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V7",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V8",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V9",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V10",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V11",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V12",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V13",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V14",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V15",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V16",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V17",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V18",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V19",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V20",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V21",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V22",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V23",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V24",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V25",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "觀察、推測及區域可分別回讀"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S1",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S2",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S3",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S4",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S5",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S6",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S7",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S8",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S9",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S10",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S11",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S12",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S13",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S14",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S15",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S16",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S17",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S18",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S19",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S20",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S21",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S22",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S23",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S24",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S25",
+      "withPlugin": "pass",
+      "withoutPlugin": "not_measured",
+      "evidence": "重複段落各自定位正確"
+    }
+  ]
+}

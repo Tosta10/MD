@@ -1,0 +1,507 @@
+{
+  "date": "2026-10-27T12:41:51.072Z",
+  "method": "Node built-ins, isolated temporary directory, no plugin imports or services",
+  "modelCalls": 0,
+  "results": [
+    {
+      "domain": "需求與問題處理",
+      "id": "T1",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T2",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T3",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T4",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T5",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T6",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T7",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T8",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T9",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T10",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T11",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T12",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T13",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T14",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T15",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T16",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T17",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T18",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T19",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T20",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T21",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T22",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T23",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T24",
+      "passed": true
+    },
+    {
+      "domain": "需求與問題處理",
+      "id": "T25",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K1",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K2",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K3",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K4",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K5",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K6",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K7",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K8",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K9",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K10",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K11",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K12",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K13",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K14",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K15",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K16",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K17",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K18",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K19",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K20",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K21",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K22",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K23",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K24",
+      "passed": true
+    },
+    {
+      "domain": "知識與檢索",
+      "id": "K25",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V1",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V2",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V3",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V4",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V5",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V6",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V7",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V8",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V9",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V10",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V11",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V12",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V13",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V14",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V15",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V16",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V17",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V18",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V19",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V20",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V21",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V22",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V23",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V24",
+      "passed": true
+    },
+    {
+      "domain": "視覺解構",
+      "id": "V25",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S1",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S2",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S3",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S4",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S5",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S6",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S7",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S8",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S9",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S10",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S11",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S12",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S13",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S14",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S15",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S16",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S17",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S18",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S19",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S20",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S21",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S22",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S23",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S24",
+      "passed": true
+    },
+    {
+      "domain": "來源與證據",
+      "id": "S25",
+      "passed": true
+    }
+  ]
+}

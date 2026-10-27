@@ -5,7 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import * as yaml from 'js-yaml';
 
-export const VERSION = '3.0.1';
+export const VERSION = '3.0.5';
 export const CATEGORIES = ['代理指令','Skill','規格與企劃','使用與操作','任務待辦','驗證與量測','版本與紀錄','授權與署名','其他文件'];
 export const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 const now = () => new Date().toISOString();
@@ -334,7 +334,7 @@ export class Workbench {
   createTask(input) {
     const title = required(input.title, '任務名稱', 200), goal = required(input.goal, '目的', 4000);
     const scope = input.scope || 'personal'; if (scope !== 'personal') this.root(scope);
-    return this.save('task', { id: uid(), title, goal, request: input.request?.slice(0, 10000) || '', scope, constraints: values(input.constraints || [], '限制'), deliverables: values(input.deliverables || [], '交付物'), criteria: values(input.criteria || [], '完成條件').map(text => ({ id: uid(), text, status: 'pending', evidence: '' })), status: 'active', corrections: [], feedback: [], createdAt: now(), updatedAt: now() });
+    return this.save('task', { id: uid(), title, goal, request: input.request ? (required(input.request, '原始需求', 14000), input.request) : '', scope, constraints: values(input.constraints || [], '限制'), deliverables: values(input.deliverables || [], '交付物'), criteria: values(input.criteria || [], '完成條件').map(text => ({ id: uid(), text, status: 'pending', evidence: '' })), status: 'active', corrections: [], feedback: [], createdAt: now(), updatedAt: now() });
   }
   updateTask(input) {
     const task = this.get('task', input.id); if (!task) fail('找不到任務', 'NOT_FOUND');

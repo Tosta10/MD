@@ -6,6 +6,6 @@ compile_task_request 保存原始 request、目標、交付、限制、驗收、
 
 context_run(action:begin,taskId) 建立共用預算；build_context_package 帶 taskId、expectedRevision、runId，初始 maxTokens 約3000。回傳本次採用、理由、完整必要條件、來源、待核對候選及省略數。沒有命中時補來源，不把不適用知識硬塞入。修改任務後建立新的明確工作，不繞過舊預算。
 
-Thariq 方法依情況使用：陌生限制做盲點掃描；偏好難表達才做不同原型；答案影響架構才訪談；有實際參考才解構；重大取捨留下筆記；交付提供可驗證成果；使用者想學會時再做反向測驗。list_methods 提供產物與停止條件，不是每次八步。
+需要探索重大未知或驗證實作時，使用 [task-harness](../../task-harness/SKILL.md)；list_methods 提供可選方法及停止條件，無需每次執行所有方法。
 
 record_evidence 保存任務版本、觀察、證據位置、環境及結果。build_learning_report 列驗收與缺口；填報證據不是獨立執行。未做比較就維持 not_measured。

@@ -59,6 +59,15 @@ export async function startUi(workbench, { port = 0, role = 'both' } = {}) {
         }
         if (url.pathname === '/api/remove-scope') return send(res, 200, { result: workbench.removeRoot(input.id) });
         if (url.pathname === '/api/asset' && role !== 'md') { if (typeof input.base64 !== 'string') throw new Error('需要圖片資料'); const {file,...asset} = workbench.visual?workbench.visual.import(input):workbench.addAsset(Buffer.from(input.base64, 'base64'), input.name); return send(res, 200, { result: asset }); }
+        if (url.pathname === '/api/visual-asset-list' && role !== 'md') return send(res, 200, { result: workbench.visual.list(input) });
+        if (url.pathname === '/api/visual-asset-state' && role !== 'md') return send(res, 200, { result: workbench.visual.setAssetState(input) });
+        if (url.pathname === '/api/visual-record-state' && role !== 'md') return send(res, 200, { result: workbench.visual.setRecordState(input) });
+        if (url.pathname === '/api/visual-record-list' && role !== 'md') return send(res, 200, { result: workbench.visual.records(input) });
+        if (url.pathname === '/api/source-state' && role !== 'md') {
+          if (!['active','trashed'].includes(input.lifecycle)) throw new Error('狀態不正確');
+          const item=workbench.get('source',input.id);if(!item)throw new Error('來源不存在');
+          return send(res,200,{result:workbench.sources.save({id:input.id,expectedRevision:input.expectedRevision,lifecycle:input.lifecycle})});
+        }
         if (url.pathname === '/api/delete-memory' && role !== 'md') return send(res, 200, { result: workbench.deleteMemory(input.id,input.expectedRevision) });
         return send(res, 404, { error: '找不到操作' });
       }

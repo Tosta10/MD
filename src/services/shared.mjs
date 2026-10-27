@@ -27,7 +27,7 @@ export function page(w, kind, { scope: requested = '', query = '', offset = 0, l
   const where = ['kind=?'], params = [kind];
   if (requested) { scope(w, requested); where.push("json_extract(data,'$.scope')=?"); params.push(requested); }
   if (query) { where.push("(json_extract(data,'$.title') LIKE ? ESCAPE '\\' OR id=?)"); params.push(`%${String(query).replace(/[\\%_]/g, '\\$&')}%`, query); }
-  if (lifecycle) { where.push("json_extract(data,'$.lifecycle')=?"); params.push(lifecycle); }
+  if (lifecycle) { where.push("COALESCE(json_extract(data,'$.lifecycle'),'active')=?"); params.push(lifecycle); }
   const total = w.db.prepare(`SELECT count(*) n FROM records WHERE ${where.join(' AND ')}`).get(...params).n;
   const size = Math.min(100, Math.max(1, Number(limit) || 30)), start = Math.max(0, Number(offset) || 0);
   const rows = w.db.prepare(`SELECT data FROM records WHERE ${where.join(' AND ')} ORDER BY rowid DESC LIMIT ? OFFSET ?`).all(...params, size, start);

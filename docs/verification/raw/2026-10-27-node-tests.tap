@@ -1,0 +1,424 @@
+TAP version 13
+# Subtest: Markdown parser ignores code links and completed examples; reads safe frontmatter
+ok 1 - Markdown parser ignores code links and completed examples; reads safe frontmatter
+  ---
+  duration_ms: 15.8217
+  type: 'test'
+  ...
+# Subtest: scope scanner excludes vendor, own data, junction escapes and deduplicates hardlinks
+ok 2 - scope scanner excludes vendor, own data, junction escapes and deduplicates hardlinks
+  ---
+  duration_ms: 31.3417
+  type: 'test'
+  ...
+# Subtest: marking completed files never edits originals and becomes stale after a change
+ok 3 - marking completed files never edits originals and becomes stale after a change
+  ---
+  duration_ms: 21.6183
+  type: 'test'
+  ...
+# Subtest: deletion requires confirmed completed mark and handles inbound links in the same batch
+ok 4 - deletion requires confirmed completed mark and handles inbound links in the same batch
+  ---
+  duration_ms: 41.5946
+  type: 'test'
+  ...
+# Subtest: apply detects live inbound links introduced after proposal
+ok 5 - apply detects live inbound links introduced after proposal
+  ---
+  duration_ms: 25.7193
+  type: 'test'
+  ...
+# Subtest: proposal and restore never overwrite concurrent edits
+ok 6 - proposal and restore never overwrite concurrent edits
+  ---
+  duration_ms: 34.4976
+  type: 'test'
+  ...
+# Subtest: batch rollback recovers earlier writes if a later write fails
+ok 7 - batch rollback recovers earlier writes if a later write fails
+  ---
+  duration_ms: 29.0834
+  type: 'test'
+  ...
+# Subtest: new references validate against planned files, protected files remain immutable
+ok 8 - new references validate against planned files, protected files remain immutable
+  ---
+  duration_ms: 37.3852
+  type: 'test'
+  ...
+# Subtest: audit identifies the five principles without treating code examples as commands
+ok 9 - audit identifies the five principles without treating code examples as commands
+  ---
+  duration_ms: 19.8678
+  type: 'test'
+  ...
+# Subtest: context excludes pending deletion and memories respect scope, confirmation, expiry
+ok 10 - context excludes pending deletion and memories respect scope, confirmation, expiry
+  ---
+  duration_ms: 18.053
+  type: 'test'
+  ...
+# Subtest: task completion requires evidence; changed goals invalidate previous verification
+ok 11 - task completion requires evidence; changed goals invalidate previous verification
+  ---
+  duration_ms: 14.5646
+  type: 'test'
+  ...
+# Subtest: visual references require supported bytes and preserve comparison scope
+ok 12 - visual references require supported bytes and preserve comparison scope
+  ---
+  duration_ms: 24.0738
+  type: 'test'
+  ...
+# Subtest: merge guards every source version, including unchanged source files
+ok 13 - merge guards every source version, including unchanged source files
+  ---
+  duration_ms: 31.9195
+  type: 'test'
+  ...
+# Subtest: shared database serializes writers and releases lock after failure
+ok 14 - shared database serializes writers and releases lock after failure
+  ---
+  duration_ms: 61.7799
+  type: 'test'
+  ...
+# Subtest: non-UTF8 Markdown is skipped without rewriting its bytes
+ok 15 - non-UTF8 Markdown is skipped without rewriting its bytes
+  ---
+  duration_ms: 19.3553
+  type: 'test'
+  ...
+# Subtest: manual classification is versioned and never removes source protections
+ok 16 - manual classification is versioned and never removes source protections
+  ---
+  duration_ms: 25.7965
+  type: 'test'
+  ...
+# Subtest: HTTP local session checks token and origin, and round-trips Chinese payloads
+ok 17 - HTTP local session checks token and origin, and round-trips Chinese payloads
+  ---
+  duration_ms: 74.6485
+  type: 'test'
+  ...
+# Subtest: standalone md plugin negotiates MCP, lists scoped tools and opens its UI
+ok 18 - standalone md plugin negotiates MCP, lists scoped tools and opens its UI
+  ---
+  duration_ms: 1522.9212
+  type: 'test'
+  ...
+# Subtest: standalone insight plugin negotiates MCP, lists scoped tools and opens its UI
+ok 19 - standalone insight plugin negotiates MCP, lists scoped tools and opens its UI
+  ---
+  duration_ms: 2024.8644
+  type: 'test'
+  ...
+# Subtest: portable Node md starts without PowerShell and supports the full tool profile
+ok 20 - portable Node md starts without PowerShell and supports the full tool profile
+  ---
+  duration_ms: 297.7369
+  type: 'test'
+  ...
+# Subtest: portable Node insight starts without PowerShell and supports the full tool profile
+ok 21 - portable Node insight starts without PowerShell and supports the full tool profile
+  ---
+  duration_ms: 434.4946
+  type: 'test'
+  ...
+# Subtest: rounded numeric inode values never merge distinct files or hardlink groups
+ok 22 - rounded numeric inode values never merge distinct files or hardlink groups
+  ---
+  duration_ms: 89.8051
+  type: 'test'
+  ...
+# Subtest: migration snapshots legacy data, preserves the original and marks legacy confirmation for review
+ok 23 - migration snapshots legacy data, preserves the original and marks legacy confirmation for review
+  ---
+  duration_ms: 164.9766
+  type: 'test'
+  ...
+# Subtest: warm scans read zero bodies and changed files alone are parsed
+ok 24 - warm scans read zero bodies and changed files alone are parsed
+  ---
+  duration_ms: 71.6694
+  type: 'test'
+  ...
+# Subtest: temporarily unreadable subtrees preserve prior index and scope membership
+ok 25 - temporarily unreadable subtrees preserve prior index and scope membership
+  ---
+  duration_ms: 55.7841
+  type: 'test'
+  ...
+# Subtest: overlapping roots retain one document and removing a root retains other memberships
+ok 26 - overlapping roots retain one document and removing a root retains other memberships
+  ---
+  duration_ms: 53.308
+  type: 'test'
+  ...
+# Subtest: completion display, filters and summary respect explicit completion withdrawal
+ok 27 - completion display, filters and summary respect explicit completion withdrawal
+  ---
+  duration_ms: 52.8736
+  type: 'test'
+  ...
+# Subtest: knowledge search requires query, bounds results and separates uncertain applicability
+ok 28 - knowledge search requires query, bounds results and separates uncertain applicability
+  ---
+  duration_ms: 63.6068
+  type: 'test'
+  ...
+# Subtest: knowledge CAS is atomic across connections; changed validated content needs new review
+ok 29 - knowledge CAS is atomic across connections; changed validated content needs new review
+  ---
+  duration_ms: 65.7514
+  type: 'test'
+  ...
+# Subtest: knowledge trash and restoration preserve all revisions
+ok 30 - knowledge trash and restoration preserve all revisions
+  ---
+  duration_ms: 47.2794
+  type: 'test'
+  ...
+# Subtest: knowledge batch failures roll back prior writes; successful apply is idempotent and reversible
+ok 31 - knowledge batch failures roll back prior writes; successful apply is idempotent and reversible
+  ---
+  duration_ms: 47.3329
+  type: 'test'
+  ...
+# Subtest: retrieval ledger avoids repeated payloads and enforces a run byte budget
+ok 32 - retrieval ledger avoids repeated payloads and enforces a run byte budget
+  ---
+  duration_ms: 138.7384
+  type: 'test'
+  ...
+# Subtest: source changes downgrade knowledge without erasing prior evidence
+ok 33 - source changes downgrade knowledge without erasing prior evidence
+  ---
+  duration_ms: 51.1271
+  type: 'test'
+  ...
+# Subtest: FTS and short Chinese lookup return bounded section references; section reads reject stale source
+ok 34 - FTS and short Chinese lookup return bounded section references; section reads reject stale source
+  ---
+  duration_ms: 46.156
+  type: 'test'
+  ...
+# Subtest: deletion detects newly introduced unindexed references and remains reversible
+ok 35 - deletion detects newly introduced unindexed references and remains reversible
+  ---
+  duration_ms: 108.8353
+  type: 'test'
+  ...
+# Subtest: failed compensation enters recoverable state and journal supports deterministic recovery
+ok 36 - failed compensation enters recoverable state and journal supports deterministic recovery
+  ---
+  duration_ms: 128.5683
+  type: 'test'
+  ...
+# Subtest: task revisions, evidence and reports never fabricate a measured learning gain
+ok 37 - task revisions, evidence and reports never fabricate a measured learning gain
+  ---
+  duration_ms: 49.9118
+  type: 'test'
+  ...
+# Subtest: health and state avoid audit and full-content lists
+ok 38 - health and state avoid audit and full-content lists
+  ---
+  duration_ms: 116.2568
+  type: 'test'
+  ...
+# Subtest: move repairs inbound and outbound Markdown links, preserves ID through rescans and restores
+ok 39 - move repairs inbound and outbound Markdown links, preserves ID through rescans and restores
+  ---
+  duration_ms: 144.6151
+  type: 'test'
+  ...
+# Subtest: section edits preserve BOM, CRLF and unrelated text
+ok 40 - section edits preserve BOM, CRLF and unrelated text
+  ---
+  duration_ms: 90.2086
+  type: 'test'
+  ...
+# Subtest: similarity candidates remain evidence-based and become stale when a peer changes
+ok 41 - similarity candidates remain evidence-based and become stale when a peer changes
+  ---
+  duration_ms: 58.8416
+  type: 'test'
+  ...
+# Subtest: index jobs finish with observable counts and cancellation preserves previous entries
+ok 42 - index jobs finish with observable counts and cancellation preserves previous entries
+  ---
+  duration_ms: 175.5722
+  type: 'test'
+  ...
+# Subtest: automatic classification supports Chinese filenames and clearing overrides updates indexed lists
+ok 43 - automatic classification supports Chinese filenames and clearing overrides updates indexed lists
+  ---
+  duration_ms: 59.128
+  type: 'test'
+  ...
+# Subtest: long knowledge exceptions can be read fully with field pagination and a shared ledger
+ok 44 - long knowledge exceptions can be read fully with field pagination and a shared ledger
+  ---
+  duration_ms: 44.7126
+  type: 'test'
+  ...
+# Subtest: domain packs preserve revisions and support bounded source reads
+ok 45 - domain packs preserve revisions and support bounded source reads
+  ---
+  duration_ms: 40.8395
+  type: 'test'
+  ...
+# Subtest: source chunk locators point to each occurrence of repeated sections
+ok 46 - source chunk locators point to each occurrence of repeated sections
+  ---
+  duration_ms: 47.4642
+  type: 'test'
+  ...
+# Subtest: compact MCP tools reveal only requested groups and preserve the full-host fallback
+ok 47 - compact MCP tools reveal only requested groups and preserve the full-host fallback
+  ---
+  duration_ms: 6.0971
+  type: 'test'
+  ...
+# Subtest: v3 snapshots v2 and never writes back into the running old database
+ok 48 - v3 snapshots v2 and never writes back into the running old database
+  ---
+  duration_ms: 78.9622
+  type: 'test'
+  ...
+# Subtest: ranking finds highly relevant late titles beyond the old first 120 candidates
+ok 49 - ranking finds highly relevant late titles beyond the old first 120 candidates
+  ---
+  duration_ms: 290.386
+  type: 'test'
+  ...
+# Subtest: version ranges and scope filtering run before candidate limits
+ok 50 - version ranges and scope filtering run before candidate limits
+  ---
+  duration_ms: 221.731
+  type: 'test'
+  ...
+# Subtest: retrieval generations invalidate sent-query caches and host vectors stay version bound
+ok 51 - retrieval generations invalidate sent-query caches and host vectors stay version bound
+  ---
+  duration_ms: 49.9652
+  type: 'test'
+  ...
+# Subtest: research source changes invalidate dependent knowledge without losing original evidence
+ok 52 - research source changes invalidate dependent knowledge without losing original evidence
+  ---
+  duration_ms: 47.9687
+  type: 'test'
+  ...
+# Subtest: task compilation preserves original request and old task revisions; context expires on revision
+ok 53 - task compilation preserves original request and old task revisions; context expires on revision
+  ---
+  duration_ms: 44.8942
+  type: 'test'
+  ...
+# Subtest: read budgets apply to implicit runs, cross-scope reads, and reject unknown bypass arguments
+ok 54 - read budgets apply to implicit runs, cross-scope reads, and reject unknown bypass arguments
+  ---
+  duration_ms: 41.4453
+  type: 'test'
+  ...
+# Subtest: PNG crops use bounded workers, shared image budgets, and preserve source bytes
+ok 55 - PNG crops use bounded workers, shared image budgets, and preserve source bytes
+  ---
+  duration_ms: 152.5037
+  type: 'test'
+  ...
+# Subtest: visual recipes, regions and timelines check scope, coordinates, ordering and CAS
+ok 56 - visual recipes, regions and timelines check scope, coordinates, ordering and CAS
+  ---
+  duration_ms: 70.7305
+  type: 'test'
+  ...
+# Subtest: pixel comparison records an actual measurement without asserting aesthetics
+ok 57 - pixel comparison records an actual measurement without asserting aesthetics
+  ---
+  duration_ms: 161.4813
+  type: 'test'
+  ...
+# Subtest: merge rejects partial coverage and lost clauses; valid full coverage applies and restores
+ok 58 - merge rejects partial coverage and lost clauses; valid full coverage applies and restores
+  ---
+  duration_ms: 137.4336
+  type: 'test'
+  ...
+# Subtest: router splitting and metadata edits preserve independent content, BOM and CRLF
+ok 59 - router splitting and metadata edits preserve independent content, BOM and CRLF
+  ---
+  duration_ms: 138.9238
+  type: 'test'
+  ...
+# Subtest: annotation and category failures roll back together
+ok 60 - annotation and category failures roll back together
+  ---
+  duration_ms: 56.0694
+  type: 'test'
+  ...
+# Subtest: autonomy policies block scope changes and quotas before changes and preserve undo
+ok 61 - autonomy policies block scope changes and quotas before changes and preserve undo
+  ---
+  duration_ms: 60.5345
+  type: 'test'
+  ...
+# Subtest: persistent drafts survive another connection and reject stale saves
+ok 62 - persistent drafts survive another connection and reject stale saves
+  ---
+  duration_ms: 61.6734
+  type: 'test'
+  ...
+# Subtest: selection snapshots report partial changes accurately and jobs never alter source files
+ok 63 - selection snapshots report partial changes accurately and jobs never alter source files
+  ---
+  duration_ms: 167.0202
+  type: 'test'
+  ...
+# Subtest: knowledge import produces candidates without overriding original identities
+ok 64 - knowledge import produces candidates without overriding original identities
+  ---
+  duration_ms: 51.3766
+  type: 'test'
+  ...
+# Subtest: tool definitions are unique, validate forbidden inputs, and keep UI reads outside AI budgets
+ok 65 - tool definitions are unique, validate forbidden inputs, and keep UI reads outside AI budgets
+  ---
+  duration_ms: 104.5755
+  type: 'test'
+  ...
+# Subtest: evaluation reports do not invent comparisons or significance
+ok 66 - evaluation reports do not invent comparisons or significance
+  ---
+  duration_ms: 42.2229
+  type: 'test'
+  ...
+# Subtest: default AI inventories fit the shared budget rather than returning UI-sized pages
+ok 67 - default AI inventories fit the shared budget rather than returning UI-sized pages
+  ---
+  duration_ms: 130.786
+  type: 'test'
+  ...
+# Subtest: source removals invalidate referencing audit caches without forcing a full audit
+ok 68 - source removals invalidate referencing audit caches without forcing a full audit
+  ---
+  duration_ms: 53.7486
+  type: 'test'
+  ...
+# Subtest: a mismatched run rejects knowledge mutations before saving
+ok 69 - a mismatched run rejects knowledge mutations before saving
+  ---
+  duration_ms: 36.3038
+  type: 'test'
+  ...
+1..69
+# tests 69
+# suites 0
+# pass 69
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4936.4555

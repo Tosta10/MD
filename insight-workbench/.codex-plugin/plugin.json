@@ -1,6 +1,6 @@
 {
   "name": "insight-workbench",
-  "version": "3.0.1",
+  "version": "3.0.5",
   "description": "保存需求、限制、驗證證據及有情境的經驗，協助 Codex 理解與改善工作。",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
